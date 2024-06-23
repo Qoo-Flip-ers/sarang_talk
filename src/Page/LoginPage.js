@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Form, Input, Button, Checkbox } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 
@@ -10,7 +11,15 @@ const LoginPage = () => {
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
+  const navigate = useNavigate();
 
+  const goToSign = () => {
+    navigate("/signin");
+  };
+
+  const goToLogIn = () => {
+    navigate("/login");
+  };
   return (
     <div style={{ maxWidth: "300px", margin: "50px auto" }}>
       <Form
@@ -45,7 +54,7 @@ const LoginPage = () => {
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary" block>
+          <Button type="primary" block onClick={goToSign}>
             Login
           </Button>
         </Form.Item>
