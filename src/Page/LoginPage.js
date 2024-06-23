@@ -16,10 +16,6 @@ const LoginPage = () => {
   const goToSign = () => {
     navigate("/signin");
   };
-
-  const goToLogIn = () => {
-    navigate("/login");
-  };
   return (
     <div style={{ maxWidth: "300px", margin: "50px auto" }}>
       <Form
