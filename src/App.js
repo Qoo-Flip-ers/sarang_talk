@@ -1,63 +1,33 @@
 import React from "react";
-import { Form, Input, Button, Checkbox } from "antd";
-import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import LoginPage from "./pages/LoginPage";
+import BaseLayout from "./components/BaseLayout";
+import UserPage from "./pages/UserPage";
+import KoreanPage from "./pages/KoreanPage";
 
 const App = () => {
-  const onFinish = (values) => {
-    console.log("Success:", values);
-  };
-
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
-  };
-
   return (
-    <div style={{ maxWidth: "300px", margin: "50px auto" }}>
-      <Form
-        name="basic"
-        initialValues={{ remember: true }}
-        onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
-        autoComplete="off"
-      >
-        {/* <Form.Item
-          label="제목"
-          name="Tile"
-          rules={[{ required: true, message: "Please input your tile!" }]}
-        >
-          <Input />
-        </Form.Item> */}
-        <Form.Item
-          label="Username"
-          name="username"
-          rules={[{ required: true, message: "Please input your username!" }]}
-        >
-          <Input prefix={<UserOutlined />} placeholder="아이디" />
-        </Form.Item>
-
-        <Form.Item
-          label="Password"
-          name="password"
-          rules={[{ required: true, message: "Please input your password!" }]}
-        >
-          <Input.Password
-            prefix={<LockOutlined />}
-            type="password"
-            placeholder="비밀번호"
-          />
-        </Form.Item>
-
-        <Form.Item name="remember" valuePropName="checked">
-          <Checkbox>Remember me</Checkbox>
-        </Form.Item>
-
-        <Form.Item>
-          <Button type="primary" htmlType="submit">
-            Login
-          </Button>
-        </Form.Item>
-      </Form>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LoginPage />} />
+        <Route
+          path="/korean"
+          element={
+            <BaseLayout>
+              <KoreanPage />
+            </BaseLayout>
+          }
+        />
+        <Route
+          path="/user"
+          element={
+            <BaseLayout>
+              <UserPage />
+            </BaseLayout>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
   );
 };
 
