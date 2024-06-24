@@ -1,14 +1,31 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import HomePage from "./Page/HomePage";
-import LoginPage from "./Page/LoginPage";
+import LoginPage from "./pages/LoginPage";
+import BaseLayout from "./components/BaseLayout";
+import UserPage from "./pages/UserPage";
+import KoreanPage from "./pages/KoreanPage";
 
 const App = () => {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LoginPage />} />
-        <Route path="/signin" element={<HomePage />} />
+        <Route
+          path="/korean"
+          element={
+            <BaseLayout>
+              <KoreanPage />
+            </BaseLayout>
+          }
+        />
+        <Route
+          path="/user"
+          element={
+            <BaseLayout>
+              <UserPage />
+            </BaseLayout>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

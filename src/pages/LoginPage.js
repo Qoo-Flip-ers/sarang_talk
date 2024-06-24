@@ -14,7 +14,7 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   const goToSign = () => {
-    navigate("/signin");
+    navigate("/korean");
   };
   return (
     <div style={{ maxWidth: "300px", margin: "50px auto" }}>
