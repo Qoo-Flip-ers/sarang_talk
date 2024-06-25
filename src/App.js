@@ -4,6 +4,7 @@ import LoginPage from "./pages/LoginPage";
 import BaseLayout from "./components/BaseLayout";
 import UserPage from "./pages/UserPage";
 import KoreanPage from "./pages/KoreanPage";
+import KoreanRegisterPage from "./pages/KoreanRegisterPage";
 
 const App = () => {
   return (
@@ -23,6 +24,14 @@ const App = () => {
           element={
             <BaseLayout>
               <UserPage />
+            </BaseLayout>
+          }
+        />
+        <Route
+          path="/korean/register"
+          element={
+            <BaseLayout>
+              <KoreanRegisterPage />
             </BaseLayout>
           }
         />
