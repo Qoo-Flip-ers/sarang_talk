@@ -78,7 +78,32 @@ const KoreanPage = () => {
     {
       title: "Description",
       dataIndex: "description",
-      key: "adescriptionge",
+      key: "description",
+    },
+    {
+      title: "Pronunciation",
+      dataIndex: "pronunciation",
+      key: "pronunciation",
+    },
+    {
+      title: "Example1",
+      dataIndex: "example1",
+      key: "example1",
+    },
+    {
+      title: "Example2",
+      dataIndex: "example2",
+      key: "example2",
+    },
+    {
+      title: "Example3",
+      dataIndex: "example3",
+      key: "example3",
+    },
+    {
+      title: "Level",
+      dataIndex: "level",
+      key: "level",
     },
   ];
   return (
@@ -120,22 +145,5 @@ const KoreanPage = () => {
     </div>
   );
 };
-const dummy = [
-  {
-    key: "1",
-    korean: "John Brown",
-    description: 32,
-  },
-  {
-    key: "2",
-    korean: "Jim Green",
-    description: 42,
-  },
-  {
-    key: "3",
-    korean: "Joe Black",
-    description: 32,
-  },
-];
 
 export default KoreanPage;
