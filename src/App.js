@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { RecoilRoot } from "recoil";
 import LoginPage from "./pages/LoginPage";
 import BaseLayout from "./components/BaseLayout";
 import UserPage from "./pages/UserPage";
@@ -9,43 +10,45 @@ import UserRegisterPage from "./pages/UserRegisterPage";
 
 const App = () => {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<LoginPage />} />
-        <Route
-          path="/korean"
-          element={
-            <BaseLayout>
-              <KoreanPage />
-            </BaseLayout>
-          }
-        />
-        <Route
-          path="/user"
-          element={
-            <BaseLayout>
-              <UserPage />
-            </BaseLayout>
-          }
-        />
-        <Route
-          path="/korean/register"
-          element={
-            <BaseLayout>
-              <KoreanRegisterPage />
-            </BaseLayout>
-          }
-        />
-        <Route
-          path="/user/register"
-          element={
-            <BaseLayout>
-              <UserRegisterPage />
-            </BaseLayout>
-          }
-        />
-      </Routes>
-    </BrowserRouter>
+    <RecoilRoot>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<LoginPage />} />
+          <Route
+            path="/korean"
+            element={
+              <BaseLayout>
+                <KoreanPage />
+              </BaseLayout>
+            }
+          />
+          <Route
+            path="/user"
+            element={
+              <BaseLayout>
+                <UserPage />
+              </BaseLayout>
+            }
+          />
+          <Route
+            path="/korean/register"
+            element={
+              <BaseLayout>
+                <KoreanRegisterPage />
+              </BaseLayout>
+            }
+          />
+          <Route
+            path="/user/register"
+            element={
+              <BaseLayout>
+                <UserRegisterPage />
+              </BaseLayout>
+            }
+          />
+        </Routes>
+      </BrowserRouter>
+    </RecoilRoot>
   );
 };
 
