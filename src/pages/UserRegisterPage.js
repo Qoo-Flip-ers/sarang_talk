@@ -5,21 +5,19 @@ import { useNavigate } from "react-router-dom";
 const { Title } = Typography;
 
 const UserRegisterPage = () => {
-  const [id, setId] = useState("");
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [status, setStatus] = useState("");
   const navigate = useNavigate();
 
   const onClick = async () => {
-    if (!id || !name || !phoneNumber || !status) {
+    if (!name || !phoneNumber || !status) {
       message.warning("내용을 입력해주세요.");
       return;
     }
 
     try {
       const response = await createWord({
-        id,
         name,
         phoneNumber,
         status,
@@ -42,18 +40,6 @@ const UserRegisterPage = () => {
       <Title level={2}>사용자 관리</Title>
       <Divider></Divider>
       <Form>
-        <Form.Item
-          label="id"
-          name="id"
-          rules={[
-            {
-              required: true,
-              message: "Please input id!",
-            },
-          ]}
-        >
-          <Input onChange={(e) => setId(e.target.value)} />
-        </Form.Item>
         <Form.Item
           label="name"
           name="name"
