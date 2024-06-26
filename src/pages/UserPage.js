@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, Table, message, Modal } from "antd";
 import { useNavigate } from "react-router-dom";
-import { getWords, deleteWord } from "../api/user";
+import { getUsers, deleteUser } from "../api/user";
 
 const UserPage = () => {
   const navigate = useNavigate();
@@ -23,7 +23,7 @@ const UserPage = () => {
   const getList = async () => {
     // const data = dummy;
 
-    const response = await getWords({
+    const response = await getUsers({
       page: 1,
       limit: 10,
     });
@@ -43,7 +43,7 @@ const UserPage = () => {
 
   const onDelete = () => {
     selectedRowKeys.forEach(async (key) => {
-      await deleteWord(key);
+      await deleteUser(key);
     });
 
     message.success(selectedRowKeys.length + "개 단어가 삭제되었습니다.");

@@ -1,32 +1,27 @@
 import React, { useState } from "react";
-import { useRecoilState } from "recoil";
-import { userState } from "../store/userAtom";
-import { createWord } from "../api/user";
+import { createUser } from "../api/user";
 import { Typography, Divider, Form, Input, Button, message, Rate } from "antd";
 import { useNavigate } from "react-router-dom";
 const { Title } = Typography;
 
 const UserRegisterPage = () => {
-  // const [name, setName] = useState("");
-  // const [phoneNumber, setPhoneNumber] = useState("");
-  // const [status, setStatus] = useState("");
-  const [userRegistration, setuserRegistration] = useRecoilState(userState);
+  const [name, setName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [status, setStatus] = useState("");
   const navigate = useNavigate();
 
-  const onChagne = (e) => {
-    const { name, value } = e.target;
-    setuserRegistration((prev) => ({ ...prev, [name]: value }));
-  };
-
   const onClick = async () => {
-    const { name, phoneNumber, status } = userRegistration;
     if (!name || !phoneNumber || !status) {
       message.warning("내용을 입력해주세요.");
       return;
     }
 
     try {
-      const response = await createWord(userRegistration);
+      const response = await createUser({
+        name,
+        phoneNumber,
+        status,
+      });
       if (response.status === 200 || response.status === 201) {
         message.success("등록이 완료되었습니다.");
         navigate("/user");
@@ -55,11 +50,7 @@ const UserRegisterPage = () => {
             },
           ]}
         >
-          <Input
-            name="name"
-            value={userRegistration.name}
-            onChange={onChagne}
-          />
+          <Input onChange={(e) => setName(e.target.value)} />
         </Form.Item>
         <Form.Item
           label="phoneNumber"
@@ -71,11 +62,7 @@ const UserRegisterPage = () => {
             },
           ]}
         >
-          <Input
-            name="phoneNumber"
-            value={userRegistration.phoneNumber}
-            onChange={onChagne}
-          />
+          <Input onChange={(e) => setPhoneNumber(e.target.value)} />
         </Form.Item>
         <Form.Item
           label="status"
@@ -87,11 +74,7 @@ const UserRegisterPage = () => {
             },
           ]}
         >
-          <Input
-            name="status"
-            value={userRegistration.status}
-            onChange={onChagne}
-          />
+          <Input onChange={(e) => setStatus(e.target.value)} />
         </Form.Item>
         <Button type="primary" htmlType="submit" onClick={onClick}>
           등록
