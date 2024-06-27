@@ -10,28 +10,36 @@ const UserRegisterPage = () => {
   const [status, setStatus] = useState("");
   const navigate = useNavigate();
 
-  const onClick = async () => {
+  // const onClick = async () => {
+  //   if (!name || !phoneNumber || !status) {
+  //     message.warning("내용을 입력해주세요.");
+  //     return;
+  //   }
+
+  //   try {
+  //     const response = await createUser({
+  //       name,
+  //       phoneNumber,
+  //       status,
+  //     });
+  //     if (response.status === 200 || response.status === 201) {
+  //       message.success("등록이 완료되었습니다.");
+  //       navigate("/user");
+  //     } else {
+  //       message.error("다시 시도해주세요.");
+  //     }
+  //   } catch (e) {
+  //     console.error(e);
+  //   } finally {
+  //     // loading 종료
+  //   }
+  // };
+  const onClick = () => {
     if (!name || !phoneNumber || !status) {
       message.warning("내용을 입력해주세요.");
-      return;
-    }
-
-    try {
-      const response = await createUser({
-        name,
-        phoneNumber,
-        status,
-      });
-      if (response.status === 200 || response.status === 201) {
-        message.success("등록이 완료되었습니다.");
-        navigate("/user");
-      } else {
-        message.error("다시 시도해주세요.");
-      }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      // loading 종료
+    } else {
+      message.success("등록이 완료되었습니다.");
+      navigate("/user");
     }
   };
 

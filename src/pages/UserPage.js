@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Table, message, Modal } from "antd";
+import { Button, Table, message, Modal, Flex } from "antd";
 import { useNavigate } from "react-router-dom";
 import { getUsers, deleteUser } from "../api/user";
 
@@ -65,9 +65,9 @@ const UserPage = () => {
     onChange: onSelectChange,
   };
 
-  useEffect(() => {
-    getList();
-  }, []);
+  // useEffect(() => {
+  //   getList();
+  // }, []);
 
   const columns = [
     {
@@ -88,23 +88,25 @@ const UserPage = () => {
   ];
   return (
     <div>
-      <Button
-        type="primary"
-        style={{
-          marginTop: "auto",
-          marginBottom: "10px",
-        }}
-        onClick={goToUserRegister}
-      >
-        Add
-      </Button>
-      <Button
-        type="primary"
-        onClick={showModal}
-        disabled={selectedRowKeys.length === 0}
-      >
-        Delete
-      </Button>
+      <Flex gap="small" wrap>
+        <Button
+          type="primary"
+          style={{
+            marginTop: "auto",
+            marginBottom: "10px",
+          }}
+          onClick={goToUserRegister}
+        >
+          Add
+        </Button>
+        <Button
+          type="primary"
+          onClick={showModal}
+          disabled={selectedRowKeys.length === 0}
+        >
+          Delete
+        </Button>
+      </Flex>
       <Modal
         title="Delete"
         open={open}

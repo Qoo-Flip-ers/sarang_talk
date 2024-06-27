@@ -1,8 +1,16 @@
 import React, { useState } from "react";
-import { createWord } from "../api/word";
-import { Typography, Divider, Form, Input, Button, message, Rate } from "antd";
+import {
+  Typography,
+  Divider,
+  Form,
+  Input,
+  Button,
+  message,
+  Rate,
+  Radio,
+} from "antd";
 import { useNavigate } from "react-router-dom";
-const { Title } = Typography;
+const { Title, Link } = Typography;
 
 const KoreanRegisterPage = () => {
   const [korean, setKorean] = useState("");
@@ -12,37 +20,51 @@ const KoreanRegisterPage = () => {
   const [example2, setexmple2] = useState("");
   const [example3, setexmple3] = useState("");
   const [level, setLevel] = useState();
+  const [type, setType] = useState("");
+  const [source, setSource] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
   const navigate = useNavigate();
 
-  const onClick = async () => {
+  // const onClick = async () => {
+  //   if (!korean || !description || !pronunciation || !level) {
+  //     message.warning("내용을 입력해주세요.");
+  //     return;
+  //   }
+
+  //   try {
+  //     const response = await createWord({
+  //       korean,
+  //       description,
+  //       pronunciation,
+  //       example1,
+  //       example2,
+  //       example3,
+  //       level,
+  //       type,
+  //       source,
+  //       imageUrl,
+  //     });
+  //     if (response.status === 200 || response.status === 201) {
+  //       message.success("등록이 완료되었습니다.");
+  //       navigate("/korean");
+  //     } else {
+  //       message.error("다시 시도해주세요.");
+  //     }
+  //   } catch (e) {
+  //     console.error(e);
+  //   } finally {
+  //     // loading 종료
+  //   }
+  // };
+
+  const onClick = () => {
     if (!korean || !description || !pronunciation || !level) {
       message.warning("내용을 입력해주세요.");
-      return;
-    }
-
-    try {
-      const response = await createWord({
-        korean,
-        description,
-        pronunciation,
-        level,
-        example1,
-        example2,
-        example3,
-      });
-      if (response.status === 200 || response.status === 201) {
-        message.success("등록이 완료되었습니다.");
-        navigate("/korean");
-      } else {
-        message.error("다시 시도해주세요.");
-      }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      // loading 종료
+    } else {
+      message.success("등록이 완료되었습니다.");
+      navigate("/korean");
     }
   };
-
   return (
     <div>
       <Title level={2}>한국어 관리</Title>
@@ -100,12 +122,31 @@ const KoreanRegisterPage = () => {
             onChange={(value) => setLevel(value)}
           />
         </Form.Item>
-        <Button type="primary" htmlType="submit" onClick={onClick}>
-          등록
-        </Button>
+        <Form.Item label="type" name="type">
+          <Radio.Group
+            onChange={(e) => setType(e.target.value)}
+            value={type}
+            defaultValue="daily_conversation"
+          >
+            <Radio value="daily_conversation">daily_conversation</Radio>
+            <Radio value="kpop_lyrics">kpop_lyrics</Radio>
+            <Radio value="topik_word">topik_word</Radio>
+            <Radio value="topik_variation">topik_variation</Radio>
+          </Radio.Group>
+        </Form.Item>
+        <Form.Item label="source" name="source">
+          <Input onChange={(e) => setSource(e.target.value)} />
+        </Form.Item>
+        <Form.Item label="imageUrl" name="imageUrl">
+          <Input onChange={(e) => setImageUrl(e.target.value)} />
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" htmlType="submit" onClick={onClick}>
+            등록
+          </Button>
+        </Form.Item>
       </Form>
     </div>
   );
 };
-
 export default KoreanRegisterPage;

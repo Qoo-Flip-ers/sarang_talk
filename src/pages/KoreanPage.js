@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Table, message, Modal } from "antd";
+import { Button, Table, message, Modal, Flex } from "antd";
 import { useNavigate } from "react-router-dom";
 import { getWords, deleteWord } from "../api/word";
 
@@ -65,9 +65,9 @@ const KoreanPage = () => {
     onChange: onSelectChange,
   };
 
-  useEffect(() => {
-    getList();
-  }, []);
+  // useEffect(() => {
+  //   getList();
+  // }, []);
 
   const columns = [
     {
@@ -105,26 +105,43 @@ const KoreanPage = () => {
       dataIndex: "level",
       key: "level",
     },
+    {
+      title: "Type",
+      dataIndex: "type",
+      key: "type",
+    },
+    {
+      title: "Source",
+      dataIndex: "source",
+      key: "source",
+    },
+    {
+      title: "ImageUrl",
+      dataIndex: "imageUrl",
+      key: "imageUrl",
+    },
   ];
   return (
     <div>
-      <Button
-        type="primary"
-        style={{
-          marginTop: "auto",
-          marginBottom: "10px",
-        }}
-        onClick={goToKoreanRegister}
-      >
-        Add
-      </Button>
-      <Button
-        type="primary"
-        onClick={showModal}
-        disabled={selectedRowKeys.length === 0}
-      >
-        Delete
-      </Button>
+      <Flex gap="small" wrap>
+        <Button
+          type="primary"
+          style={{
+            marginTop: "auto",
+            marginBottom: "10px",
+          }}
+          onClick={goToKoreanRegister}
+        >
+          Add
+        </Button>
+        <Button
+          type="primary"
+          onClick={showModal}
+          disabled={selectedRowKeys.length === 0}
+        >
+          Delete
+        </Button>
+      </Flex>
       <Modal
         title="Delete"
         open={open}
