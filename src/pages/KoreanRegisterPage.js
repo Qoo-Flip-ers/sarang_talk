@@ -61,6 +61,20 @@ const KoreanRegisterPage = () => {
     if (!korean || !description || !pronunciation || !level) {
       message.warning("내용을 입력해주세요.");
     } else {
+      const newWord = {
+        korean,
+        description,
+        pronunciation,
+        example1,
+        example2,
+        example3,
+        level,
+        type,
+        source,
+        imageUrl,
+      };
+      const currentWords = JSON.parse(localStorage.getItem("words")) || [];
+      localStorage.setItem("words", JSON.stringify([...currentWords, newWord]));
       message.success("등록이 완료되었습니다.");
       navigate("/korean");
     }

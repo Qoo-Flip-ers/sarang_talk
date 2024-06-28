@@ -65,6 +65,18 @@ const UserPage = () => {
     onChange: onSelectChange,
   };
 
+  useEffect(() => {
+    const loadUsers = () => {
+      const storedWords = JSON.parse(localStorage.getItem("users")) || [];
+      const data = storedWords.map((item, index) => ({
+        ...item,
+        key: index,
+      }));
+      setDataSource(data);
+    };
+    loadUsers();
+  }, []);
+
   // useEffect(() => {
   //   getList();
   // }, []);

@@ -65,6 +65,18 @@ const KoreanPage = () => {
     onChange: onSelectChange,
   };
 
+  useEffect(() => {
+    const loadWords = () => {
+      const storedWords = JSON.parse(localStorage.getItem("words")) || [];
+      const data = storedWords.map((item, index) => ({
+        ...item,
+        key: index,
+      }));
+      setDataSource(data);
+    };
+    loadWords();
+  }, []);
+
   // useEffect(() => {
   //   getList();
   // }, []);
@@ -86,6 +98,16 @@ const KoreanPage = () => {
       key: "pronunciation",
     },
     {
+      title: "Level",
+      dataIndex: "level",
+      key: "level",
+    },
+    {
+      title: "Type",
+      dataIndex: "type",
+      key: "type",
+    },
+    {
       title: "Example1",
       dataIndex: "example1",
       key: "example1",
@@ -99,16 +121,6 @@ const KoreanPage = () => {
       title: "Example3",
       dataIndex: "example3",
       key: "example3",
-    },
-    {
-      title: "Level",
-      dataIndex: "level",
-      key: "level",
-    },
-    {
-      title: "Type",
-      dataIndex: "type",
-      key: "type",
     },
     {
       title: "Source",

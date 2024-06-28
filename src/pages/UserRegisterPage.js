@@ -38,6 +38,13 @@ const UserRegisterPage = () => {
     if (!name || !phoneNumber || !status) {
       message.warning("내용을 입력해주세요.");
     } else {
+      const newUser = {
+        name,
+        phoneNumber,
+        status,
+      };
+      const currentUsers = JSON.parse(localStorage.getItem("users")) || [];
+      localStorage.setItem("users", JSON.stringify([...currentUsers, newUser]));
       message.success("등록이 완료되었습니다.");
       navigate("/user");
     }
