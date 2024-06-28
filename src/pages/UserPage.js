@@ -97,14 +97,14 @@ const UserPage = () => {
           }}
           onClick={goToUserRegister}
         >
-          Add
+          추가
         </Button>
         <Button
           type="primary"
           onClick={showModal}
           disabled={selectedRowKeys.length === 0}
         >
-          Delete
+          삭제
         </Button>
       </Flex>
       <Modal

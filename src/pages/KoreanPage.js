@@ -132,14 +132,14 @@ const KoreanPage = () => {
           }}
           onClick={goToKoreanRegister}
         >
-          Add
+          추가
         </Button>
         <Button
           type="primary"
           onClick={showModal}
           disabled={selectedRowKeys.length === 0}
         >
-          Delete
+          삭제
         </Button>
       </Flex>
       <Modal
@@ -150,7 +150,7 @@ const KoreanPage = () => {
         okText="Ok"
         cancelText="Cancel"
       >
-        <p>정말 삭제 하시겠습니까?</p>
+        <p>정말 삭제하시겠습니까?</p>
       </Modal>
       <Table
         columns={columns}

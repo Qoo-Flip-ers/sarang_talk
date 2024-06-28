@@ -106,19 +106,19 @@ const KoreanRegisterPage = () => {
         >
           <Input onChange={(e) => setpronunciation(e.target.value)} />
         </Form.Item>
-        <Form.Item label="example_1" name="example_1">
-          <Input onChange={(e) => setexmple1(e.target.value)} />
-        </Form.Item>
-        <Form.Item label="example_2" name="example_2">
-          <Input onChange={(e) => setexmple2(e.target.value)} />
-        </Form.Item>
-        <Form.Item label="example_3" name="example_3">
-          <Input onChange={(e) => setexmple3(e.target.value)} />
-        </Form.Item>
-        <Form.Item label="Level" name="Level">
+        <Form.Item
+          label="Level"
+          name="Level"
+          rules={[
+            {
+              required: true,
+              message: "Please check level!",
+            },
+          ]}
+        >
           <Rate
             allowHalf
-            defaultValue={1}
+            defaultValue={0}
             onChange={(value) => setLevel(value)}
           />
         </Form.Item>
@@ -133,6 +133,15 @@ const KoreanRegisterPage = () => {
             <Radio value="topik_word">topik_word</Radio>
             <Radio value="topik_variation">topik_variation</Radio>
           </Radio.Group>
+        </Form.Item>
+        <Form.Item label="example_1" name="example_1">
+          <Input onChange={(e) => setexmple1(e.target.value)} />
+        </Form.Item>
+        <Form.Item label="example_2" name="example_2">
+          <Input onChange={(e) => setexmple2(e.target.value)} />
+        </Form.Item>
+        <Form.Item label="example_3" name="example_3">
+          <Input onChange={(e) => setexmple3(e.target.value)} />
         </Form.Item>
         <Form.Item label="source" name="source">
           <Input onChange={(e) => setSource(e.target.value)} />
