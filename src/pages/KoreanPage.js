@@ -41,17 +41,31 @@ const KoreanPage = () => {
     setDataSource(data);
   };
 
-  const onDelete = () => {
-    selectedRowKeys.forEach(async (key) => {
-      await deleteWord(key);
-    });
+  // const onDelete = () => {
+  //   selectedRowKeys.forEach(async (key) => {
+  //     await deleteWord(key);
+  //   });
 
-    message.success(selectedRowKeys.length + "개 단어가 삭제되었습니다.");
+  //   message.success(selectedRowKeys.length + "개 단어가 삭제되었습니다.");
+
+  //   // 선택된 keys 초기화, 목록 새로고침, 모달 닫기
+  //   setSelectedRowKeys([]);
+  //   getList();
+
+  //   setOpen(false);
+  // };
+
+  const onDelete = () => {
+    const remainingWords = dataSource.filter(
+      (word) => !selectedRowKeys.includes(word.key)
+    );
+    setDataSource(remainingWords);
+    localStorage.setItem("words", JSON.stringify(remainingWords));
+
+    message.success(`${selectedRowKeys.length}개 단어가 삭제되었습니다.`);
 
     // 선택된 keys 초기화, 목록 새로고침, 모달 닫기
     setSelectedRowKeys([]);
-    getList();
-
     setOpen(false);
   };
 

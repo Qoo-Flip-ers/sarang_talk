@@ -41,17 +41,31 @@ const UserPage = () => {
     setDataSource(data);
   };
 
-  const onDelete = () => {
-    selectedRowKeys.forEach(async (key) => {
-      await deleteUser(key);
-    });
+  // const onDelete = () => {
+  //   selectedRowKeys.forEach(async (key) => {
+  //     await deleteUser(key);
+  //   });
 
-    message.success(selectedRowKeys.length + "개 단어가 삭제되었습니다.");
+  //   message.success(selectedRowKeys.length + "개 단어가 삭제되었습니다.");
+
+  //   // 선택된 keys 초기화, 목록 새로고침, 모달 닫기
+  //   setSelectedRowKeys([]);
+  //   getList();
+
+  //   setOpen(false);
+  // };
+
+  const onDelete = () => {
+    const remainingWords = dataSource.filter(
+      (user) => !selectedRowKeys.includes(user.key)
+    );
+    setDataSource(remainingWords);
+    localStorage.setItem("users", JSON.stringify(remainingWords));
+
+    message.success(`${selectedRowKeys.length}명 유저가 삭제되었습니다.`);
 
     // 선택된 keys 초기화, 목록 새로고침, 모달 닫기
     setSelectedRowKeys([]);
-    getList();
-
     setOpen(false);
   };
 
