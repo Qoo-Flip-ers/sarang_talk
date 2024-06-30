@@ -97,18 +97,18 @@ const KoreanPage = () => {
     },
     {
       title: "Example1",
-      dataIndex: "example1",
-      key: "example1",
+      dataIndex: "example_1",
+      key: "example_1",
     },
     {
       title: "Example2",
-      dataIndex: "example2",
-      key: "example2",
+      dataIndex: "example_2",
+      key: "example_2",
     },
     {
       title: "Example3",
-      dataIndex: "example3",
-      key: "example3",
+      dataIndex: "example_3",
+      key: "example_3",
     },
     {
       title: "Source",
