@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Table, message, Modal } from "antd";
+import { Button, Table, message, Modal, Flex } from "antd";
 import { useNavigate } from "react-router-dom";
 import { getWords, deleteWord } from "../api/word";
 
@@ -41,17 +41,31 @@ const KoreanPage = () => {
     setDataSource(data);
   };
 
-  const onDelete = () => {
-    selectedRowKeys.forEach(async (key) => {
-      await deleteWord(key);
-    });
+  // const onDelete = () => {
+  //   selectedRowKeys.forEach(async (key) => {
+  //     await deleteWord(key);
+  //   });
 
-    message.success(selectedRowKeys.length + "개 단어가 삭제되었습니다.");
+  //   message.success(selectedRowKeys.length + "개 단어가 삭제되었습니다.");
+
+  //   // 선택된 keys 초기화, 목록 새로고침, 모달 닫기
+  //   setSelectedRowKeys([]);
+  //   getList();
+
+  //   setOpen(false);
+  // };
+
+  const onDelete = () => {
+    const remainingWords = dataSource.filter(
+      (word) => !selectedRowKeys.includes(word.key)
+    );
+    setDataSource(remainingWords);
+    localStorage.setItem("words", JSON.stringify(remainingWords));
+
+    message.success(`${selectedRowKeys.length}개 단어가 삭제되었습니다.`);
 
     // 선택된 keys 초기화, 목록 새로고침, 모달 닫기
     setSelectedRowKeys([]);
-    getList();
-
     setOpen(false);
   };
 
@@ -66,8 +80,20 @@ const KoreanPage = () => {
   };
 
   useEffect(() => {
-    getList();
+    const loadWords = () => {
+      const storedWords = JSON.parse(localStorage.getItem("words")) || [];
+      const data = storedWords.map((item, index) => ({
+        ...item,
+        key: index,
+      }));
+      setDataSource(data);
+    };
+    loadWords();
   }, []);
+
+  // useEffect(() => {
+  //   getList();
+  // }, []);
 
   const columns = [
     {
@@ -78,28 +104,70 @@ const KoreanPage = () => {
     {
       title: "Description",
       dataIndex: "description",
-      key: "adescriptionge",
+      key: "description",
+    },
+    {
+      title: "Pronunciation",
+      dataIndex: "pronunciation",
+      key: "pronunciation",
+    },
+    {
+      title: "Level",
+      dataIndex: "level",
+      key: "level",
+    },
+    {
+      title: "Type",
+      dataIndex: "type",
+      key: "type",
+    },
+    {
+      title: "Example1",
+      dataIndex: "example1",
+      key: "example1",
+    },
+    {
+      title: "Example2",
+      dataIndex: "example2",
+      key: "example2",
+    },
+    {
+      title: "Example3",
+      dataIndex: "example3",
+      key: "example3",
+    },
+    {
+      title: "Source",
+      dataIndex: "source",
+      key: "source",
+    },
+    {
+      title: "ImageUrl",
+      dataIndex: "imageUrl",
+      key: "imageUrl",
     },
   ];
   return (
     <div>
-      <Button
-        type="primary"
-        style={{
-          marginTop: "auto",
-          marginBottom: "10px",
-        }}
-        onClick={goToKoreanRegister}
-      >
-        Add
-      </Button>
-      <Button
-        type="primary"
-        onClick={showModal}
-        disabled={selectedRowKeys.length === 0}
-      >
-        Delete
-      </Button>
+      <Flex gap="small" wrap>
+        <Button
+          type="primary"
+          style={{
+            marginTop: "auto",
+            marginBottom: "10px",
+          }}
+          onClick={goToKoreanRegister}
+        >
+          추가
+        </Button>
+        <Button
+          type="primary"
+          onClick={showModal}
+          disabled={selectedRowKeys.length === 0}
+        >
+          삭제
+        </Button>
+      </Flex>
       <Modal
         title="Delete"
         open={open}
@@ -108,7 +176,7 @@ const KoreanPage = () => {
         okText="Ok"
         cancelText="Cancel"
       >
-        <p>정말 삭제 하시겠습니까?</p>
+        <p>정말 삭제하시겠습니까?</p>
       </Modal>
       <Table
         columns={columns}
@@ -120,22 +188,5 @@ const KoreanPage = () => {
     </div>
   );
 };
-const dummy = [
-  {
-    key: "1",
-    korean: "John Brown",
-    description: 32,
-  },
-  {
-    key: "2",
-    korean: "Jim Green",
-    description: 42,
-  },
-  {
-    key: "3",
-    korean: "Joe Black",
-    description: 32,
-  },
-];
 
 export default KoreanPage;

@@ -5,6 +5,7 @@ import BaseLayout from "./components/BaseLayout";
 import UserPage from "./pages/UserPage";
 import KoreanPage from "./pages/KoreanPage";
 import KoreanRegisterPage from "./pages/KoreanRegisterPage";
+import UserRegisterPage from "./pages/UserRegisterPage";
 
 const App = () => {
   return (
@@ -32,6 +33,14 @@ const App = () => {
           element={
             <BaseLayout>
               <KoreanRegisterPage />
+            </BaseLayout>
+          }
+        />
+        <Route
+          path="/user/register"
+          element={
+            <BaseLayout>
+              <UserRegisterPage />
             </BaseLayout>
           }
         />
