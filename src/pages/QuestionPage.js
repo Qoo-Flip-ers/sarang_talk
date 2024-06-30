@@ -15,9 +15,10 @@ import {
 } from "antd";
 import { useNavigate } from "react-router-dom";
 import { getWords, deleteWord } from "../api/word";
+import { deleteQuestion, getQuestions } from "../api/question";
 const { Title, Link } = Typography;
 
-const KoreanPage = () => {
+const QuestionPage = () => {
   const navigate = useNavigate();
   const [dataSource, setDataSource] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -35,13 +36,13 @@ const KoreanPage = () => {
     setOpen(false);
   };
 
-  const goToKoreanRegister = () => {
-    navigate("/korean/register");
+  const goToQuestionsRegister = () => {
+    navigate("/question/register");
   };
 
   const getList = async (newPage) => {
     try {
-      const response = await getWords({
+      const response = await getQuestions({
         page: newPage,
         limit: 10,
       });
@@ -49,8 +50,8 @@ const KoreanPage = () => {
         throw new Error("서버 에러");
       }
 
-      const { totalCount, totalPage, words } = response.data;
-      const data = words.map((item) => {
+      const { totalCount, totalPage, questions } = response.data;
+      const data = questions.map((item) => {
         return {
           ...item,
           key: item.id,
@@ -69,14 +70,13 @@ const KoreanPage = () => {
   const onDelete = async () => {
     const methods = [];
     selectedRowKeys.forEach(async (key) => {
-      methods.push(deleteWord(key));
+      methods.push(deleteQuestion(key));
     });
 
-    const response = await Promise.all(methods);
+    const resposne = await Promise.all(methods);
 
-    message.success(selectedRowKeys.length + "개 단어가 삭제되었습니다.");
+    message.success(selectedRowKeys.length + "개 문제가 삭제되었습니다.");
 
-    // 선택된 keys 초기화, 목록 새로고침, 모달 닫기
     setSelectedRowKeys([]);
     setOpen(false);
     refresh();
@@ -120,8 +120,8 @@ const KoreanPage = () => {
       render: (type) => {
         let color = "blue";
         switch (type) {
-          case "daily_conversation":
-            color = "green";
+          case "topik_variation":
+            color = "orange";
             break;
           case "kpop_lyrics":
             color = "blue";
@@ -137,37 +137,22 @@ const KoreanPage = () => {
       },
     },
     {
-      title: "단어",
-      dataIndex: "korean",
-      key: "korean",
+      title: "문제",
+      dataIndex: "title",
+      key: "title",
       width: "40%",
-      render: (korean, row) => {
+      render: (title, row) => {
         return (
           <Col>
             <p style={{ fontWeight: "bold", fontSize: 14, marginBottom: 0 }}>
-              {korean}
+              {title}
             </p>
-            <p
-              style={{
-                color: "#888888",
-                fontSize: 12,
-                marginBottom: 0,
-              }}
-            >
-              [
-              <span
-                style={{
-                  fontStyle: "italic",
-                }}
-              >
-                {row.pronunciation}
-              </span>
-              ]
-            </p>
+
             <p
               style={{
                 fontSize: 12,
                 color: "#555555",
+                whiteSpace: "pre",
               }}
             >
               {row.description}
@@ -183,43 +168,25 @@ const KoreanPage = () => {
     // },
 
     {
-      title: "예문",
-      dataIndex: "example_1",
-      key: "example_1",
+      title: "정답",
+      dataIndex: "answer",
+      key: "answer",
       width: "40%",
-      render: (example_1, row) => {
+      render: (answer, row) => {
         return (
           <Col>
             <p style={{ fontWeight: "bold", fontSize: 14, marginBottom: 0 }}>
-              {example_1}
+              {answer}
             </p>
-            <p
-              style={{
-                color: "#888888",
-                fontSize: 12,
-                marginBottom: 0,
-              }}
-            >
-              [
-              <span
-                style={{
-                  fontStyle: "italic",
-                }}
-              >
-                {row.example_2}
-              </span>
-              ]
-            </p>
+
             <p
               style={{
                 fontSize: 12,
                 color: "#555555",
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
+                whiteSpace: "pre",
               }}
             >
-              {row.example_3}
+              {row.explanation}
             </p>
           </Col>
         );
@@ -227,18 +194,27 @@ const KoreanPage = () => {
     },
 
     {
-      title: "출처",
-      width: "10%",
-      dataIndex: "source",
-      key: "source",
-      render: (source) => (
-        <p style={{ fontSize: 12, color: "#777" }}>{source}</p>
+      title: "이미지",
+      // width: "10%",
+      dataIndex: "imageUrl",
+      key: "imageUrl",
+      align: "center",
+
+      render: (imageUrl) => (
+        <div>
+          {imageUrl && (
+            <img
+              src={`https://image.annyeongwa.xyz/${imageUrl}`}
+              style={{ maxHeight: "50px" }}
+            />
+          )}
+        </div>
       ),
     },
   ];
   return (
     <div>
-      <Title level={2}>한국어 관리</Title>
+      <Title level={2}>기출문제 관리</Title>
       <Divider />
       <Flex gap="small" wrap>
         <Row
@@ -251,7 +227,7 @@ const KoreanPage = () => {
               style={{
                 marginRight: 6,
               }}
-              onClick={goToKoreanRegister}
+              onClick={goToQuestionsRegister}
             >
               추가
             </Button>
@@ -291,4 +267,4 @@ const KoreanPage = () => {
   );
 };
 
-export default KoreanPage;
+export default QuestionPage;

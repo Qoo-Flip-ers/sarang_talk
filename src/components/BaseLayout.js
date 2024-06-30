@@ -22,6 +22,12 @@ const BaseLayout = ({ children }) => {
     },
     {
       key: "2",
+      icon: <GlobalOutlined />,
+      label: "기출문제 관리",
+      onClick: () => navigate("/question"),
+    },
+    {
+      key: "3",
       icon: <UserOutlined />,
       label: "사용자 관리",
       onClick: () => navigate("/user"),

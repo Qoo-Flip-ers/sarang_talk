@@ -8,20 +8,21 @@ import {
   message,
   Rate,
   Radio,
+  Row,
 } from "antd";
-import { useNavigate } from "react-router-dom";
+import { Link, Route, useNavigate } from "react-router-dom";
 import { createWord } from "../api/word";
-const { Title, Link } = Typography;
+const { Title } = Typography;
 
 const KoreanRegisterPage = () => {
   const [korean, setKorean] = useState("");
   const [description, setDescription] = useState("");
   const [pronunciation, setpronunciation] = useState("");
-  const [example1, setexmple1] = useState("");
-  const [example2, setexmple2] = useState("");
-  const [example3, setexmple3] = useState("");
-  const [level, setLevel] = useState();
-  const [type, setType] = useState("");
+  const [example_1, setExmple1] = useState("");
+  const [example_2, setExmple2] = useState("");
+  const [example_3, setExmple3] = useState("");
+  const [level, setLevel] = useState(1);
+  const [type, setType] = useState("daily_conversation");
   const [source, setSource] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const navigate = useNavigate();
@@ -37,10 +38,10 @@ const KoreanRegisterPage = () => {
         korean,
         description,
         pronunciation,
-        example_1: example1,
-        example_2: example2,
-        example_3: example3,
-        level,
+        example_1,
+        example_2,
+        example_3,
+        level: 1, // 사용안하고 있어서 1로 고정
         type,
         source,
         imageUrl,
@@ -60,11 +61,46 @@ const KoreanRegisterPage = () => {
 
   return (
     <div>
-      <Title level={2}>한국어 관리</Title>
+      <Title level={2}>한국어 등록</Title>
       <Divider></Divider>
-      <Form>
+      <Form style={{ maxWidth: 800 }}>
         <Form.Item
-          label="korean"
+          label="카테고리"
+          name="type"
+          rules={[
+            {
+              required: true,
+              message: "Please input Korean!",
+            },
+          ]}
+          labelAlign="left"
+          labelCol={{ span: 5 }}
+        >
+          <Radio.Group
+            onChange={(e) => setType(e.target.value)}
+            value={type}
+            defaultValue="daily_conversation"
+          >
+            <Radio value="daily_conversation">Daily Conversation</Radio>
+            <Radio value="kpop_lyrics">K-POP Lyrics</Radio>
+            <Radio value="topik_word">TOPIK 빈출단어</Radio>
+            {/* <Radio value="topik_variation">TOPIK 기출 변형 문제</Radio> */}
+          </Radio.Group>
+          <p
+            style={{
+              color: "#999",
+              fontSize: 12,
+              marginTop: 10,
+            }}
+          >
+            *TOPIK 기출 변형문제는{" "}
+            <Link to="/question/register">문제 등록 페이지</Link>에서
+            등록해주세요 !
+          </p>
+        </Form.Item>
+
+        <Form.Item
+          label="표현 / KR"
           name="korean"
           rules={[
             {
@@ -72,23 +108,13 @@ const KoreanRegisterPage = () => {
               message: "Please input Korean!",
             },
           ]}
+          labelAlign="left"
+          labelCol={{ span: 5 }}
         >
-          <Input onChange={(e) => setKorean(e.target.value)} />
+          <Input size="large" onChange={(e) => setKorean(e.target.value)} />
         </Form.Item>
         <Form.Item
-          label="description"
-          name="description"
-          rules={[
-            {
-              required: true,
-              message: "Please input description!",
-            },
-          ]}
-        >
-          <Input onChange={(e) => setDescription(e.target.value)} />
-        </Form.Item>
-        <Form.Item
-          label="pronunciation"
+          label="표현 발음기호 / Roman"
           name="pronunciation"
           rules={[
             {
@@ -96,10 +122,32 @@ const KoreanRegisterPage = () => {
               message: "Please input pronunciation!",
             },
           ]}
+          labelAlign="left"
+          labelCol={{ span: 5 }}
         >
-          <Input onChange={(e) => setpronunciation(e.target.value)} />
+          <Input
+            size="large"
+            onChange={(e) => setpronunciation(e.target.value)}
+          />
         </Form.Item>
         <Form.Item
+          label="표현 뜻 / ID"
+          name="description"
+          rules={[
+            {
+              required: true,
+              message: "Please input description!",
+            },
+          ]}
+          labelCol={{ span: 5 }}
+          labelAlign="left"
+        >
+          <Input
+            size="large"
+            onChange={(e) => setDescription(e.target.value)}
+          />
+        </Form.Item>
+        {/* <Form.Item
           label="Level"
           name="Level"
           rules={[
@@ -114,39 +162,69 @@ const KoreanRegisterPage = () => {
             defaultValue={0}
             onChange={(value) => setLevel(value)}
           />
+        </Form.Item> */}
+
+        <Form.Item
+          label="예문 / KR"
+          name="example_1"
+          labelCol={{ span: 5 }}
+          labelAlign="left"
+        >
+          <Input size="large" onChange={(e) => setExmple1(e.target.value)} />
         </Form.Item>
-        <Form.Item label="type" name="type">
-          <Radio.Group
-            onChange={(e) => setType(e.target.value)}
-            value={type}
-            defaultValue="daily_conversation"
+        <Form.Item
+          label="예문 발음기호 / ROMAN"
+          name="example_2"
+          labelCol={{ span: 5 }}
+          labelAlign="left"
+        >
+          <Input size="large" onChange={(e) => setExmple2(e.target.value)} />
+        </Form.Item>
+        <Form.Item
+          label="예문 뜻 / ID"
+          name="example_3"
+          labelCol={{ span: 5 }}
+          labelAlign="left"
+        >
+          <Input size="large" onChange={(e) => setExmple3(e.target.value)} />
+        </Form.Item>
+        <Form.Item
+          label="출처"
+          name="source"
+          labelCol={{ span: 5 }}
+          labelAlign="left"
+        >
+          <Input size="large" onChange={(e) => setSource(e.target.value)} />
+        </Form.Item>
+        <Form.Item
+          label="이미지 파일명"
+          name="imageUrl"
+          labelCol={{ span: 5 }}
+          labelAlign="left"
+        >
+          <Input size="large" onChange={(e) => setImageUrl(e.target.value)} />
+          <span
+            style={{
+              fontSize: 12,
+              color: "#999",
+            }}
           >
-            <Radio value="daily_conversation">daily_conversation</Radio>
-            <Radio value="kpop_lyrics">kpop_lyrics</Radio>
-            <Radio value="topik_word">topik_word</Radio>
-            <Radio value="topik_variation">topik_variation</Radio>
-          </Radio.Group>
+            파일 업로드 개발 전까지는 직접 전달주세요 !
+          </span>
         </Form.Item>
-        <Form.Item label="example_1" name="example_1">
-          <Input onChange={(e) => setexmple1(e.target.value)} />
-        </Form.Item>
-        <Form.Item label="example_2" name="example_2">
-          <Input onChange={(e) => setexmple2(e.target.value)} />
-        </Form.Item>
-        <Form.Item label="example_3" name="example_3">
-          <Input onChange={(e) => setexmple3(e.target.value)} />
-        </Form.Item>
-        <Form.Item label="source" name="source">
-          <Input onChange={(e) => setSource(e.target.value)} />
-        </Form.Item>
-        <Form.Item label="imageUrl" name="imageUrl">
-          <Input onChange={(e) => setImageUrl(e.target.value)} />
-        </Form.Item>
-        <Form.Item>
-          <Button type="primary" htmlType="submit" onClick={onClick}>
+        <Row justify="end">
+          <Button
+            type="primary"
+            htmlType="submit"
+            onClick={onClick}
+            size="large"
+            style={{
+              width: "120px",
+            }}
+          >
             등록
           </Button>
-        </Form.Item>
+        </Row>
       </Form>
     </div>
   );
