@@ -43,7 +43,7 @@ const BaseLayout = ({ children }) => {
         trigger={null}
         style={{
           background: "#25A641",
-          height: "100vh",
+          minHeight: "100vh",
         }}
       >
         <div
