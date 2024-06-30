@@ -41,31 +41,17 @@ const KoreanPage = () => {
     setDataSource(data);
   };
 
-  // const onDelete = () => {
-  //   selectedRowKeys.forEach(async (key) => {
-  //     await deleteWord(key);
-  //   });
-
-  //   message.success(selectedRowKeys.length + "개 단어가 삭제되었습니다.");
-
-  //   // 선택된 keys 초기화, 목록 새로고침, 모달 닫기
-  //   setSelectedRowKeys([]);
-  //   getList();
-
-  //   setOpen(false);
-  // };
-
   const onDelete = () => {
-    const remainingWords = dataSource.filter(
-      (word) => !selectedRowKeys.includes(word.key)
-    );
-    setDataSource(remainingWords);
-    localStorage.setItem("words", JSON.stringify(remainingWords));
+    selectedRowKeys.forEach(async (key) => {
+      await deleteWord(key);
+    });
 
-    message.success(`${selectedRowKeys.length}개 단어가 삭제되었습니다.`);
+    message.success(selectedRowKeys.length + "개 단어가 삭제되었습니다.");
 
     // 선택된 keys 초기화, 목록 새로고침, 모달 닫기
     setSelectedRowKeys([]);
+    getList();
+
     setOpen(false);
   };
 
@@ -80,20 +66,8 @@ const KoreanPage = () => {
   };
 
   useEffect(() => {
-    const loadWords = () => {
-      const storedWords = JSON.parse(localStorage.getItem("words")) || [];
-      const data = storedWords.map((item, index) => ({
-        ...item,
-        key: index,
-      }));
-      setDataSource(data);
-    };
-    loadWords();
+    getList();
   }, []);
-
-  // useEffect(() => {
-  //   getList();
-  // }, []);
 
   const columns = [
     {

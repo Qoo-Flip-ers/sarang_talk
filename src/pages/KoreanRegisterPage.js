@@ -10,6 +10,7 @@ import {
   Radio,
 } from "antd";
 import { useNavigate } from "react-router-dom";
+import { createWord } from "../api/word";
 const { Title, Link } = Typography;
 
 const KoreanRegisterPage = () => {
@@ -25,43 +26,14 @@ const KoreanRegisterPage = () => {
   const [imageUrl, setImageUrl] = useState("");
   const navigate = useNavigate();
 
-  // const onClick = async () => {
-  //   if (!korean || !description || !pronunciation || !level) {
-  //     message.warning("내용을 입력해주세요.");
-  //     return;
-  //   }
-
-  //   try {
-  //     const response = await createWord({
-  //       korean,
-  //       description,
-  //       pronunciation,
-  //       example1,
-  //       example2,
-  //       example3,
-  //       level,
-  //       type,
-  //       source,
-  //       imageUrl,
-  //     });
-  //     if (response.status === 200 || response.status === 201) {
-  //       message.success("등록이 완료되었습니다.");
-  //       navigate("/korean");
-  //     } else {
-  //       message.error("다시 시도해주세요.");
-  //     }
-  //   } catch (e) {
-  //     console.error(e);
-  //   } finally {
-  //     // loading 종료
-  //   }
-  // };
-
-  const onClick = () => {
+  const onClick = async () => {
     if (!korean || !description || !pronunciation || !level) {
       message.warning("내용을 입력해주세요.");
-    } else {
-      const newWord = {
+      return;
+    }
+
+    try {
+      const response = await createWord({
         korean,
         description,
         pronunciation,
@@ -72,13 +44,20 @@ const KoreanRegisterPage = () => {
         type,
         source,
         imageUrl,
-      };
-      const currentWords = JSON.parse(localStorage.getItem("words")) || [];
-      localStorage.setItem("words", JSON.stringify([...currentWords, newWord]));
-      message.success("등록이 완료되었습니다.");
-      navigate("/korean");
+      });
+      if (response.status === 200 || response.status === 201) {
+        message.success("등록이 완료되었습니다.");
+        navigate("/korean");
+      } else {
+        message.error("다시 시도해주세요.");
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      // loading 종료
     }
   };
+
   return (
     <div>
       <Title level={2}>한국어 관리</Title>
