@@ -111,36 +111,36 @@ const QuestionPage = () => {
       key: "id",
       width: 10,
     },
-    {
-      title: "카테고리",
-      dataIndex: "type",
-      key: "type",
-      width: 100,
-      align: "center",
-      render: (type) => {
-        let color = "blue";
-        switch (type) {
-          case "topik_variation":
-            color = "orange";
-            break;
-          case "kpop_lyrics":
-            color = "blue";
-            break;
-          case "topik_word":
-            color = "purple";
-            break;
+    // {
+    //   title: "카테고리",
+    //   dataIndex: "type",
+    //   key: "type",
+    //   width: 100,
+    //   align: "center",
+    //   render: (type) => {
+    //     let color = "blue";
+    //     switch (type) {
+    //       case "topik_variation":
+    //         color = "orange";
+    //         break;
+    //       case "kpop_lyrics":
+    //         color = "blue";
+    //         break;
+    //       case "topik_word":
+    //         color = "purple";
+    //         break;
 
-          default:
-            break;
-        }
-        return <Tag color={color}>{type}</Tag>;
-      },
-    },
+    //       default:
+    //         break;
+    //     }
+    //     return <Tag color={color}>{type}</Tag>;
+    //   },
+    // },
     {
       title: "문제",
       dataIndex: "title",
       key: "title",
-      width: "40%",
+      width: "35%",
       render: (title, row) => {
         return (
           <Col>
@@ -161,17 +161,26 @@ const QuestionPage = () => {
         );
       },
     },
-    // {
-    //   title: "뜻",
-    //   dataIndex: "description",
-    //   key: "description",
-    // },
+    {
+      title: "보기",
+      dataIndex: "example_1",
+      key: "example_1",
+      width: "20%",
+      render: (example_1, row) => (
+        <Col>
+          <Row style={{ fontSize: 12 }}>{example_1}</Row>
+          <Row style={{ fontSize: 12 }}>{row.example_2}</Row>
+          <Row style={{ fontSize: 12 }}>{row.example_3}</Row>
+          <Row style={{ fontSize: 12 }}>{row.example_4}</Row>
+        </Col>
+      ),
+    },
 
     {
       title: "정답",
       dataIndex: "answer",
       key: "answer",
-      width: "40%",
+      width: "35%",
       render: (answer, row) => {
         return (
           <Col>
@@ -195,7 +204,7 @@ const QuestionPage = () => {
 
     {
       title: "이미지",
-      // width: "10%",
+      width: "100px",
       dataIndex: "imageUrl",
       key: "imageUrl",
       align: "center",

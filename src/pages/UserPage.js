@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Table, message, Modal, Flex } from "antd";
+import { Button, Table, message, Modal, Flex, Tag } from "antd";
 import { useNavigate } from "react-router-dom";
 import { getUsers, deleteUser } from "../api/user";
 
@@ -8,6 +8,11 @@ const UserPage = () => {
   const [dataSource, setDataSource] = useState("");
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [open, setOpen] = useState(false);
+  const [page, setPage] = useState(1);
+  const [metadata, setMetadata] = useState({
+    totalCount: 0,
+    totalPage: 1,
+  });
 
   const showModal = () => {
     setOpen(true);
@@ -20,53 +25,57 @@ const UserPage = () => {
     navigate("/user/register");
   };
 
-  const getList = async () => {
-    // const data = dummy;
+  const getList = async (newPage) => {
+    try {
+      const response = await getUsers({
+        page: newPage,
+        limit: 10,
+      });
+      if (response.status !== 200) {
+        throw new Error("서버 에러");
+      }
 
-    const response = await getUsers({
-      page: 1,
-      limit: 10,
-    });
-    const data = response.data.users.map((item) => {
-      return {
-        ...item,
-        key: item.id,
-      };
-    });
-    console.log(response.data.users, data);
+      const { totalCount, totalPage, users } = response.data;
 
-    // .map() return 새 배열
+      const data = users.map((item) => {
+        return {
+          ...item,
+          key: item.id,
+        };
+      });
 
-    //
-    setDataSource(data);
+      setDataSource(data);
+      setMetadata({
+        totalCount,
+        totalPage,
+      });
+    } catch (e) {
+      console.error(e);
+    }
   };
 
-  // const onDelete = () => {
-  //   selectedRowKeys.forEach(async (key) => {
-  //     await deleteUser(key);
-  //   });
+  const onDelete = async () => {
+    const methods = [];
+    selectedRowKeys.forEach(async (key) => {
+      methods.push(deleteUser(key));
+    });
 
-  //   message.success(selectedRowKeys.length + "개 단어가 삭제되었습니다.");
+    await Promise.all(methods);
 
-  //   // 선택된 keys 초기화, 목록 새로고침, 모달 닫기
-  //   setSelectedRowKeys([]);
-  //   getList();
-
-  //   setOpen(false);
-  // };
-
-  const onDelete = () => {
-    const remainingWords = dataSource.filter(
-      (user) => !selectedRowKeys.includes(user.key)
-    );
-    setDataSource(remainingWords);
-    localStorage.setItem("users", JSON.stringify(remainingWords));
-
-    message.success(`${selectedRowKeys.length}명 유저가 삭제되었습니다.`);
+    message.success(selectedRowKeys.length + "명 유저가 삭제되었습니다.");
 
     // 선택된 keys 초기화, 목록 새로고침, 모달 닫기
     setSelectedRowKeys([]);
     setOpen(false);
+    refresh();
+  };
+
+  const refresh = () => {
+    if (page === 1) {
+      getList(1);
+    } else {
+      setPage(1);
+    }
   };
 
   const onSelectChange = (newSelectedRowKeys) => {
@@ -80,20 +89,8 @@ const UserPage = () => {
   };
 
   useEffect(() => {
-    const loadUsers = () => {
-      const storedWords = JSON.parse(localStorage.getItem("users")) || [];
-      const data = storedWords.map((item, index) => ({
-        ...item,
-        key: index,
-      }));
-      setDataSource(data);
-    };
-    loadUsers();
-  }, []);
-
-  // useEffect(() => {
-  //   getList();
-  // }, []);
+    getList(page);
+  }, [page]);
 
   const columns = [
     {
@@ -107,15 +104,18 @@ const UserPage = () => {
       key: "phoneNumber",
     },
     {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
+      title: "CreatedAt",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (createdAt) => {
+        return new Date(createdAt).toLocaleString();
+      },
     },
   ];
   return (
     <div>
       <Flex gap="small" wrap>
-        <Button
+        {/* <Button
           type="primary"
           style={{
             marginTop: "auto",
@@ -124,7 +124,7 @@ const UserPage = () => {
           onClick={goToUserRegister}
         >
           추가
-        </Button>
+        </Button> */}
         <Button
           type="primary"
           onClick={showModal}
@@ -141,7 +141,7 @@ const UserPage = () => {
         okText="Ok"
         cancelText="Cancel"
       >
-        <p>정말 삭제하시겠습니까?</p>
+        <p>정말 삭제하시겠습니까? (유저는 삭제를 권하지 않습니다.)</p>
       </Modal>
       <Table
         columns={columns}
