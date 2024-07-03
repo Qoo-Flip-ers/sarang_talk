@@ -111,6 +111,25 @@ const QuestionPage = () => {
       key: "id",
       width: 10,
     },
+
+    {
+      title: "이미지",
+      width: 50,
+      dataIndex: "imageUrl",
+      key: "imageUrl",
+      align: "center",
+
+      render: (imageUrl) => (
+        <div>
+          {imageUrl && (
+            <img
+              src={`https://image.annyeongwa.xyz/${imageUrl}`}
+              style={{ maxHeight: "50px" }}
+            />
+          )}
+        </div>
+      ),
+    },
     // {
     //   title: "카테고리",
     //   dataIndex: "type",
@@ -140,7 +159,7 @@ const QuestionPage = () => {
       title: "문제",
       dataIndex: "title",
       key: "title",
-      width: "35%",
+      // width: "20%",
       render: (title, row) => {
         return (
           <Col>
@@ -165,9 +184,13 @@ const QuestionPage = () => {
       title: "보기",
       dataIndex: "example_1",
       key: "example_1",
-      width: "20%",
+      width: 200,
       render: (example_1, row) => (
-        <Col>
+        <Col
+          style={{
+            whiteSpace: "pre",
+          }}
+        >
           <Row style={{ fontSize: 12 }}>{example_1}</Row>
           <Row style={{ fontSize: 12 }}>{row.example_2}</Row>
           <Row style={{ fontSize: 12 }}>{row.example_3}</Row>
@@ -180,7 +203,7 @@ const QuestionPage = () => {
       title: "정답",
       dataIndex: "answer",
       key: "answer",
-      width: "35%",
+      // width: "20%",
       render: (answer, row) => {
         return (
           <Col>
@@ -200,25 +223,6 @@ const QuestionPage = () => {
           </Col>
         );
       },
-    },
-
-    {
-      title: "이미지",
-      width: "100px",
-      dataIndex: "imageUrl",
-      key: "imageUrl",
-      align: "center",
-
-      render: (imageUrl) => (
-        <div>
-          {imageUrl && (
-            <img
-              src={`https://image.annyeongwa.xyz/${imageUrl}`}
-              style={{ maxHeight: "50px" }}
-            />
-          )}
-        </div>
-      ),
     },
   ];
   return (
@@ -270,6 +274,7 @@ const QuestionPage = () => {
         rowSelection={{
           ...rowSelection,
         }}
+        scroll={{ x: 1000 }}
         pagination={false}
       />
     </div>
