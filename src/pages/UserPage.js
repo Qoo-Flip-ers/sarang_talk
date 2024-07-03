@@ -1,7 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Button, Table, message, Modal, Flex, Tag } from "antd";
+import {
+  Button,
+  Table,
+  message,
+  Modal,
+  Flex,
+  Tag,
+  Row,
+  Pagination,
+  Typography,
+  Divider,
+} from "antd";
 import { useNavigate } from "react-router-dom";
 import { getUsers, deleteUser } from "../api/user";
+
+const { Title, Link } = Typography;
 
 const UserPage = () => {
   const navigate = useNavigate();
@@ -29,7 +42,7 @@ const UserPage = () => {
     try {
       const response = await getUsers({
         page: newPage,
-        limit: 10,
+        limit: 20,
       });
       if (response.status !== 200) {
         throw new Error("서버 에러");
@@ -102,11 +115,13 @@ const UserPage = () => {
       title: "PhoneNumber",
       dataIndex: "phoneNumber",
       key: "phoneNumber",
+      width: 300,
     },
     {
       title: "CreatedAt",
       dataIndex: "createdAt",
       key: "createdAt",
+      width: 300,
       render: (createdAt) => {
         return new Date(createdAt).toLocaleString();
       },
@@ -114,24 +129,29 @@ const UserPage = () => {
   ];
   return (
     <div>
+      <Title level={2}>한국어 관리</Title>
+      <Divider />
       <Flex gap="small" wrap>
-        {/* <Button
-          type="primary"
-          style={{
-            marginTop: "auto",
-            marginBottom: "10px",
-          }}
-          onClick={goToUserRegister}
+        <Row
+          justify="space-between"
+          style={{ width: "100%", paddingBottom: 10 }}
         >
-          추가
-        </Button> */}
-        <Button
-          type="primary"
-          onClick={showModal}
-          disabled={selectedRowKeys.length === 0}
-        >
-          삭제
-        </Button>
+          <Row>
+            <Button onClick={showModal} disabled={selectedRowKeys.length === 0}>
+              삭제
+            </Button>
+          </Row>
+
+          <Pagination
+            current={page}
+            pageSize={20}
+            total={metadata.totalCount}
+            onChange={(newPage) => {
+              setPage(newPage);
+            }}
+            showSizeChanger={false}
+          />
+        </Row>
       </Flex>
       <Modal
         title="Delete"
@@ -149,6 +169,7 @@ const UserPage = () => {
         rowSelection={{
           ...rowSelection,
         }}
+        pagination={false}
       />
     </div>
   );
