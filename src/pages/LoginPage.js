@@ -4,15 +4,29 @@ import { userState } from "../store/userAtom";
 import { useNavigate } from "react-router-dom";
 import { Form, Input, Button, Checkbox, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import { login } from "../api/auth";
 
 const LoginPage = () => {
   const [userName, setUsername] = useRecoilState(userState);
   const navigate = useNavigate();
 
-  const onFinish = (values) => {
-    console.log("Success:", values);
-    setUsername(values.username);
-    navigate("/korean");
+  const onFinish = async (values) => {
+    try {
+      const response = await login(values);
+      console.log(response);
+      console.log(values);
+      if (response.status === 200 || response.status === 201) {
+        if (response.data && response.data.token) {
+          const { token } = response.data;
+          localStorage.setItem("token", token);
+          setUsername(values.username);
+        }
+        navigate("/korean");
+      }
+    } catch (e) {
+      message.error("아이디 비밀번호가 일치하지 않습니다.");
+      console.log(e);
+    }
   };
 
   const onFinishFailed = (errorInfo) => {
