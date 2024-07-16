@@ -195,7 +195,7 @@ const UserPage = () => {
 
   return (
     <div>
-      <Title level={2}>한국어 관리</Title>
+      <Title level={2}>사용자 관리</Title>
       <Divider />
       <Row justify="space-between" style={{ width: "100%", paddingBottom: 10 }}>
         <Button onClick={showModal} disabled={selectedRowKeys.length === 0}>
