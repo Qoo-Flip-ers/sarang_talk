@@ -35,6 +35,8 @@ const BaseLayout = ({ children }) => {
   ];
 
   const goToLogin = () => {
+    localStorage.removeItem("token");
+
     navigate("/");
   };
   return (

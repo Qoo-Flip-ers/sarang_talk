@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useRecoilState } from "recoil";
 import { userState } from "../store/userAtom";
 import { useNavigate } from "react-router-dom";
@@ -33,6 +33,13 @@ const LoginPage = () => {
     console.log("Failed:", errorInfo);
     message.warning("내용을 입력해주세요.");
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/korean");
+    }
+  }, []);
 
   return (
     <div style={{ maxWidth: "300px", margin: "50px auto" }}>

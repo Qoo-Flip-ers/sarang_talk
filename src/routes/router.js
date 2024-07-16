@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "../pages/LoginPage";
 import BaseLayout from "../components/BaseLayout";
 import UserPage from "../pages/UserPage";
@@ -9,59 +9,42 @@ import UserRegisterPage from "../pages/UserRegisterPage";
 import QuestionPage from "../pages/QuestionPage";
 import QuestionRegisterPage from "../pages/QuestionRegisterPage";
 
+const isAuthenticated = () => {
+  const token = localStorage.getItem("token");
+  return !!token; // 토큰이 존재하면 true, 그렇지 않으면 false를 반환합니다.
+};
+
+const PrivateRoute = ({ Component }) => {
+  return isAuthenticated() ? (
+    <BaseLayout>
+      <Component />
+    </BaseLayout>
+  ) : (
+    <Navigate to="/" />
+  );
+};
+
 const Router = () => {
+  const privateRoutes = [
+    { path: "/korean", Component: KoreanPage },
+    { path: "/korean/register", Component: KoreanRegisterPage },
+    { path: "/question", Component: QuestionPage },
+    { path: "/question/register", Component: QuestionRegisterPage },
+    { path: "/user", Component: UserPage },
+    { path: "/user/register", Component: UserRegisterPage },
+  ];
+
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LoginPage />} />
-        <Route
-          path="/korean"
-          element={
-            <BaseLayout>
-              <KoreanPage />
-            </BaseLayout>
-          }
-        />
-        <Route
-          path="/korean/register"
-          element={
-            <BaseLayout>
-              <KoreanRegisterPage />
-            </BaseLayout>
-          }
-        />
-        <Route
-          path="/question"
-          element={
-            <BaseLayout>
-              <QuestionPage />
-            </BaseLayout>
-          }
-        />
-        <Route
-          path="/question/register"
-          element={
-            <BaseLayout>
-              <QuestionRegisterPage />
-            </BaseLayout>
-          }
-        />
-        <Route
-          path="/user"
-          element={
-            <BaseLayout>
-              <UserPage />
-            </BaseLayout>
-          }
-        />
-        <Route
-          path="/user/register"
-          element={
-            <BaseLayout>
-              <UserRegisterPage />
-            </BaseLayout>
-          }
-        />
+        {privateRoutes.map(({ path, Component }) => (
+          <Route
+            key={path}
+            path={path}
+            element={<PrivateRoute Component={Component} />}
+          />
+        ))}
       </Routes>
     </BrowserRouter>
   );
