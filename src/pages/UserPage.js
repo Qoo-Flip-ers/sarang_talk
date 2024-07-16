@@ -1,24 +1,23 @@
 import React, { useEffect, useState } from "react";
 import {
-  Button,
   Table,
-  message,
-  Modal,
-  Flex,
-  Tag,
-  Row,
-  Pagination,
   Typography,
   Divider,
+  Button,
+  message,
+  Modal,
+  Row,
+  Pagination,
+  Tag,
 } from "antd";
 import { useNavigate } from "react-router-dom";
 import { getUsers, deleteUser } from "../api/user";
 
-const { Title, Link } = Typography;
+const { Title } = Typography;
 
 const UserPage = () => {
   const navigate = useNavigate();
-  const [dataSource, setDataSource] = useState("");
+  const [dataSource, setDataSource] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [open, setOpen] = useState(false);
   const [page, setPage] = useState(1);
@@ -51,9 +50,42 @@ const UserPage = () => {
       const { totalCount, totalPage, users } = response.data;
 
       const data = users.map((item) => {
+        const today = new Date();
+        const todayUTC = new Date(
+          Date.UTC(
+            today.getUTCFullYear(),
+            today.getUTCMonth(),
+            today.getUTCDate()
+          )
+        );
+        const isActive = item.Subscriptions?.some((sub) => {
+          const subscriptionDate = new Date(
+            Date.UTC(
+              new Date(sub.subscriptionDate).getUTCFullYear(),
+              new Date(sub.subscriptionDate).getUTCMonth(),
+              new Date(sub.subscriptionDate).getUTCDate()
+            )
+          );
+          const expirationDate = new Date(
+            Date.UTC(
+              new Date(sub.expirationDate).getUTCFullYear(),
+              new Date(sub.expirationDate).getUTCMonth(),
+              new Date(sub.expirationDate).getUTCDate()
+            )
+          );
+          return todayUTC >= subscriptionDate && todayUTC <= expirationDate;
+        });
+
         return {
           ...item,
           key: item.id,
+          active: isActive,
+          subscriptions: item.subscriptions?.map((sub) => {
+            return {
+              ...sub,
+              key: sub.id,
+            };
+          }),
         };
       });
 
@@ -68,16 +100,11 @@ const UserPage = () => {
   };
 
   const onDelete = async () => {
-    const methods = [];
-    selectedRowKeys.forEach(async (key) => {
-      methods.push(deleteUser(key));
-    });
-
+    const methods = selectedRowKeys.map((key) => deleteUser(key));
     await Promise.all(methods);
 
     message.success(selectedRowKeys.length + "명 유저가 삭제되었습니다.");
 
-    // 선택된 keys 초기화, 목록 새로고침, 모달 닫기
     setSelectedRowKeys([]);
     setOpen(false);
     refresh();
@@ -92,7 +119,6 @@ const UserPage = () => {
   };
 
   const onSelectChange = (newSelectedRowKeys) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
   };
 
@@ -105,54 +131,84 @@ const UserPage = () => {
     getList(page);
   }, [page]);
 
+  const expandedRowRender = (record) => {
+    const columns = [
+      { title: "Type", dataIndex: "type", key: "type" },
+      { title: "Plan", dataIndex: "plan", key: "plan" },
+      {
+        title: "Subscription Date",
+        dataIndex: "subscriptionDate",
+        key: "subscriptionDate",
+        render: (text) => {
+          const date = new Date(text);
+          const offset = date.getTimezoneOffset() / 60;
+          const gmt = `GMT${offset >= 0 ? "+" : ""}${offset}`;
+          return `${date.toLocaleString()} (${gmt})`;
+        },
+      },
+      {
+        title: "Expiration Date",
+        dataIndex: "expirationDate",
+        key: "expirationDate",
+        render: (text) => {
+          const date = new Date(text);
+          const offset = date.getTimezoneOffset() / 60;
+          const gmt = `GMT${offset >= 0 ? "+" : ""}${offset}`;
+          return `${date.toLocaleString()} (${gmt})`;
+        },
+      },
+      { title: "Quiz", dataIndex: "quiz", key: "quiz" },
+      { title: "Zoom", dataIndex: "zoom", key: "zoom" },
+    ];
+
+    return (
+      <Table
+        columns={columns}
+        dataSource={record.Subscriptions}
+        pagination={false}
+      />
+    );
+  };
+
   const columns = [
+    { title: "Name", dataIndex: "name", key: "name" },
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
+      title: "Active",
+      dataIndex: "active",
+      key: "active",
+      render: (active) => active && <Tag color="green">Active</Tag>,
     },
-    {
-      title: "PhoneNumber",
-      dataIndex: "phoneNumber",
-      key: "phoneNumber",
-      width: 300,
-    },
+    { title: "PhoneNumber", dataIndex: "phoneNumber", key: "phoneNumber" },
+    { title: "Email", dataIndex: "email", key: "email" },
     {
       title: "CreatedAt",
       dataIndex: "createdAt",
       key: "createdAt",
-      width: 300,
-      render: (createdAt) => {
-        return new Date(createdAt).toLocaleString();
+      render: (text) => {
+        const date = new Date(text);
+        const offset = date.getTimezoneOffset() / 60;
+        const gmt = `GMT${offset >= 0 ? "+" : ""}${offset}`;
+        return `${date.toLocaleString()} (${gmt})`;
       },
     },
   ];
+
   return (
     <div>
       <Title level={2}>한국어 관리</Title>
       <Divider />
-      <Flex gap="small" wrap>
-        <Row
-          justify="space-between"
-          style={{ width: "100%", paddingBottom: 10 }}
-        >
-          <Row>
-            <Button onClick={showModal} disabled={selectedRowKeys.length === 0}>
-              삭제
-            </Button>
-          </Row>
-
-          <Pagination
-            current={page}
-            pageSize={20}
-            total={metadata.totalCount}
-            onChange={(newPage) => {
-              setPage(newPage);
-            }}
-            showSizeChanger={false}
-          />
-        </Row>
-      </Flex>
+      <Row justify="space-between" style={{ width: "100%", paddingBottom: 10 }}>
+        <Button onClick={showModal} disabled={selectedRowKeys.length === 0}>
+          삭제
+        </Button>
+        <Pagination
+          current={page}
+          pageSize={20}
+          total={metadata.totalCount}
+          onChange={(newPage) => setPage(newPage)}
+          showSizeChanger={false}
+        />
+      </Row>
       <Modal
         title="Delete"
         open={open}
@@ -165,10 +221,9 @@ const UserPage = () => {
       </Modal>
       <Table
         columns={columns}
+        expandable={{ expandedRowRender }}
         dataSource={dataSource}
-        rowSelection={{
-          ...rowSelection,
-        }}
+        rowSelection={rowSelection}
         pagination={false}
       />
     </div>
