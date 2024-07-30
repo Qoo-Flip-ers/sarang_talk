@@ -83,7 +83,8 @@ const KoreanRegisterPage = () => {
           >
             <Radio value="daily_conversation">Daily Conversation</Radio>
             <Radio value="kpop_lyrics">K-POP Lyrics</Radio>
-            <Radio value="topik_word">TOPIK 빈출단어</Radio>
+            <Radio value="topik_word">TOPIK 단어</Radio>
+            <Radio value="basic">BASIC</Radio>
             {/* <Radio value="topik_variation">TOPIK 기출 변형 문제</Radio> */}
           </Radio.Group>
           <p

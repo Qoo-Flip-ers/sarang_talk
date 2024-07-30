@@ -129,6 +129,9 @@ const KoreanPage = () => {
           case "topik_word":
             color = "purple";
             break;
+          case "basic":
+            color = "orange";
+            break;
 
           default:
             break;
