@@ -107,22 +107,9 @@ const KoreanRegisterPage = () => {
             defaultValue="daily_conversation"
           >
             <Radio value="daily_conversation">Daily Conversation</Radio>
-            <Radio value="kpop_lyrics">K-POP Lyrics</Radio>
             <Radio value="topik_word">TOPIK 단어</Radio>
             <Radio value="basic">BASIC</Radio>
-            {/* <Radio value="topik_variation">TOPIK 기출 변형 문제</Radio> */}
           </Radio.Group>
-          <p
-            style={{
-              color: "#999",
-              fontSize: 12,
-              marginTop: 10,
-            }}
-          >
-            *TOPIK 기출 변형문제는{" "}
-            <Link to="/question/register">문제 등록 페이지</Link>에서
-            등록해주세요 !
-          </p>
         </Form.Item>
 
         <Form.Item
@@ -258,7 +245,7 @@ const KoreanRegisterPage = () => {
         >
           <Input size="large" onChange={(e) => setSource(e.target.value)} />
         </Form.Item>
-        <Form.Item
+        {/* <Form.Item
           label="이미지 파일명"
           name="imageUrl"
           labelCol={{ span: 5 }}
@@ -273,7 +260,7 @@ const KoreanRegisterPage = () => {
           >
             파일 업로드 개발 전까지는 직접 전달주세요 !
           </span>
-        </Form.Item>
+        </Form.Item> */}
         <Row justify="end">
           <Button
             type="primary"
