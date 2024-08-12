@@ -11,3 +11,6 @@ export const updateWord = async (id, payload) =>
   await api.put(`/words/${id}`, payload);
 
 export const deleteWord = async (id) => await api.delete(`/words/${id}`);
+
+export const checkWord = async (korean) =>
+  await api.post("/words/check", { korean });

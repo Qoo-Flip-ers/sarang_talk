@@ -11,7 +11,7 @@ import {
   Row,
 } from "antd";
 import { Link, Route, useNavigate } from "react-router-dom";
-import { createWord } from "../api/word";
+import { checkWord, createWord } from "../api/word";
 const { Title } = Typography;
 
 const KoreanRegisterPage = () => {
@@ -25,9 +25,14 @@ const KoreanRegisterPage = () => {
   const [type, setType] = useState("daily_conversation");
   const [source, setSource] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [usableWord, setUsableWord] = useState(false);
   const navigate = useNavigate();
 
   const onClick = async () => {
+    if (!usableWord) {
+      message.warning("중복확인을 해주세요.");
+      return;
+    }
     if (!korean || !description || !pronunciation || !level) {
       message.warning("내용을 입력해주세요.");
       return;
@@ -56,6 +61,26 @@ const KoreanRegisterPage = () => {
       console.error(e);
     } finally {
       // loading 종료
+    }
+  };
+
+  const onClickCheckWord = async () => {
+    if (!korean) {
+      message.warning("한국어를 입력해주세요.");
+      return;
+    }
+
+    // 중복확인 api 호출
+    try {
+      const response = await checkWord(korean);
+      if (response.status === 200 && !response.data.result) {
+        setUsableWord(true);
+        message.success("사용 가능한 한국어입니다.");
+      } else {
+        message.error("이미 등록된 한국어입니다.");
+      }
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -112,7 +137,43 @@ const KoreanRegisterPage = () => {
           labelAlign="left"
           labelCol={{ span: 5 }}
         >
-          <Input size="large" onChange={(e) => setKorean(e.target.value)} />
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Input
+              size="large"
+              onChange={(e) => {
+                setKorean(e.target.value);
+                setUsableWord(false);
+              }}
+            />
+            <div
+              style={{
+                width: 100,
+                marginLeft: 10,
+                height: 40,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: usableWord ? "#bfbfbf" : "#1890ff",
+                borderRadius: 5,
+                cursor: "pointer",
+              }}
+              onClick={onClickCheckWord}
+            >
+              <span
+                style={{
+                  color: "#fff",
+                }}
+              >
+                중복확인
+              </span>
+            </div>
+          </div>
         </Form.Item>
         <Form.Item
           label="표현 발음기호 / Roman"
