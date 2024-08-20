@@ -28,6 +28,7 @@ const Router = () => {
   const privateRoutes = [
     { path: "/korean", Component: KoreanPage },
     { path: "/korean/register", Component: KoreanRegisterPage },
+    { path: "/korean/:id", Component: KoreanRegisterPage },
     { path: "/question", Component: QuestionPage },
     { path: "/question/register", Component: QuestionRegisterPage },
     { path: "/user", Component: UserPage },

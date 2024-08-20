@@ -12,9 +12,11 @@ import {
   Tooltip,
   Typography,
   Divider,
+  Radio,
 } from "antd";
 import { useNavigate } from "react-router-dom";
-import { getWords, deleteWord } from "../api/word";
+import { getWords, deleteWord, getWordsCount } from "../api/word";
+
 const { Title, Link } = Typography;
 
 const KoreanPage = () => {
@@ -28,6 +30,15 @@ const KoreanPage = () => {
     totalPage: 1,
   });
 
+  const [currentCategory, setCurrentCategory] = useState("all");
+
+  const [count, setCount] = useState({
+    total: 0,
+    basic: 0,
+    daily_conversation: 0,
+    topik_word: 0,
+  });
+
   const showModal = () => {
     setOpen(true);
   };
@@ -39,11 +50,12 @@ const KoreanPage = () => {
     navigate("/korean/register");
   };
 
-  const getList = async (newPage) => {
+  const getList = async (newPage = 1, newCategory = "all") => {
     try {
       const response = await getWords({
         page: newPage,
         limit: 10,
+        type: newCategory === "all" ? undefined : newCategory,
       });
       if (response.status !== 200) {
         throw new Error("서버 에러");
@@ -101,8 +113,8 @@ const KoreanPage = () => {
   };
 
   useEffect(() => {
-    getList(page);
-  }, [page]);
+    getList(page, currentCategory);
+  }, [page, currentCategory]);
 
   const columns = [
     {
@@ -230,27 +242,185 @@ const KoreanPage = () => {
     },
 
     {
-      title: "출처",
+      title: "",
       width: "10%",
       dataIndex: "source",
       key: "source",
-      render: (source) => (
-        <p style={{ fontSize: 12, color: "#777" }}>{source}</p>
+      render: (source, row) => (
+        <Button onClick={() => navigate(`/korean/${row.id}`)}>수정</Button>
       ),
     },
   ];
+
+  const onChangeCategory = (e) => {
+    if (currentCategory === e.target.value) return;
+    setPage(1);
+    setCurrentCategory(e.target.value);
+  };
+
+  const getCounts = async () => {
+    try {
+      const response = await getWordsCount();
+
+      if (response.status === 200) {
+        const { basic, daily_conversation, topik_word } = response.data;
+        setCount({
+          basic,
+          daily_conversation,
+          topik_word,
+          all: basic + daily_conversation + topik_word,
+        });
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  useEffect(() => {
+    getCounts();
+  }, []);
+
   return (
     <div>
       <Title level={2}>한국어 관리</Title>
       <Divider />
       <Flex gap="small" wrap>
         <Row
+          style={{
+            marginBottom: 20,
+          }}
+        >
+          <Radio.Group
+            onChange={onChangeCategory}
+            defaultValue="all"
+            value={currentCategory}
+            buttonStyle="solid"
+          >
+            <Radio.Button value="all">
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                All
+                <span
+                  style={{
+                    color: currentCategory === "all" ? "#1677ff" : "#fff",
+                    fontSize: 12,
+                    display: "flex",
+                    height: 20,
+                    minWidth: 30,
+                    padding: "0 5px",
+                    marginLeft: 10,
+                    borderRadius: 10,
+                    backgroundColor:
+                      currentCategory === "all" ? "#fff" : "#999",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  {count.all || "0"}
+                </span>
+              </div>
+            </Radio.Button>
+            <Radio.Button value="basic">
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                basic
+                <span
+                  style={{
+                    color: currentCategory === "basic" ? "#1677ff" : "#fff",
+                    fontSize: 12,
+                    display: "flex",
+                    height: 20,
+
+                    minWidth: 30,
+                    padding: "0 5px",
+                    marginLeft: 10,
+                    borderRadius: 10,
+                    backgroundColor:
+                      currentCategory === "basic" ? "#fff" : "#999",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  {count.basic}
+                </span>
+              </div>
+            </Radio.Button>
+            <Radio.Button value="daily_conversation">
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                daily_conversation
+                <span
+                  style={{
+                    color:
+                      currentCategory === "daily_conversation"
+                        ? "#1677ff"
+                        : "#fff",
+                    fontSize: 12,
+                    display: "flex",
+                    height: 20,
+                    width: 20,
+                    marginLeft: 10,
+                    borderRadius: 10,
+                    backgroundColor:
+                      currentCategory === "daily_conversation"
+                        ? "#fff"
+                        : "#999",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  {count.daily_conversation}
+                </span>
+              </div>
+            </Radio.Button>
+            <Radio.Button value="topik_word">
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                topik_word
+                <span
+                  style={{
+                    color:
+                      currentCategory === "topik_word" ? "#1677ff" : "#fff",
+                    fontSize: 12,
+                    display: "flex",
+                    height: 20,
+                    width: 20,
+                    marginLeft: 10,
+                    borderRadius: 10,
+                    backgroundColor:
+                      currentCategory === "topik_word" ? "#fff" : "#999",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  {count.topik_word}
+                </span>
+              </div>
+            </Radio.Button>
+          </Radio.Group>
+        </Row>
+        <Row
           justify="space-between"
           style={{ width: "100%", paddingBottom: 10 }}
         >
           <Row>
             <Button
-              type="primary"
               style={{
                 marginRight: 6,
               }}
@@ -258,7 +428,11 @@ const KoreanPage = () => {
             >
               추가
             </Button>
-            <Button onClick={showModal} disabled={selectedRowKeys.length === 0}>
+            <Button
+              type="dashed"
+              onClick={showModal}
+              disabled={selectedRowKeys.length === 0}
+            >
               삭제
             </Button>
           </Row>
