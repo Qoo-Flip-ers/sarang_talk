@@ -6,11 +6,11 @@ import {
   Input,
   Button,
   message,
-  Rate,
   Radio,
   Row,
+  Col,
 } from "antd";
-import { Link, Route, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { checkWord, createWord, getWord, updateWord } from "../api/word";
 const { Title } = Typography;
 
@@ -19,14 +19,16 @@ const KoreanRegisterPage = () => {
   const [loading, setLoading] = useState(false);
   const [korean, setKorean] = useState("");
   const [description, setDescription] = useState("");
-  const [pronunciation, setpronunciation] = useState("");
-  const [example_1, setExmple1] = useState("");
-  const [example_2, setExmple2] = useState("");
-  const [example_3, setExmple3] = useState("");
-  const [level, setLevel] = useState(1);
+  const [pronunciation, setPronunciation] = useState("");
+  const [example_1, setExample1] = useState("");
+  const [example_2, setExample2] = useState("");
+  const [example_3, setExample3] = useState("");
+  const [en_description, setENDescription] = useState("");
+  const [en_pronunciation, setENPronunciation] = useState("");
+  const [en_example_1, setENExample1] = useState("");
+  const [en_example_2, setENExample2] = useState("");
+  const [en_example_3, setENExample3] = useState("");
   const [type, setType] = useState("daily_conversation");
-  const [source, setSource] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
   const [usableWord, setUsableWord] = useState(params.id ? true : false);
   const navigate = useNavigate();
 
@@ -35,7 +37,7 @@ const KoreanRegisterPage = () => {
       message.warning("중복확인을 해주세요.");
       return;
     }
-    if (!korean || !description || !pronunciation || !level) {
+    if (!korean || !description || !pronunciation) {
       message.warning("내용을 입력해주세요.");
       return;
     }
@@ -48,10 +50,12 @@ const KoreanRegisterPage = () => {
         example_1,
         example_2,
         example_3,
-        level: 1, // 사용안하고 있어서 1로 고정
+        en_description,
+        en_pronunciation,
+        en_example_1,
+        en_example_2,
+        en_example_3,
         type,
-        source,
-        imageUrl,
       });
       if (response.status === 200 || response.status === 201) {
         message.success("수정이 완료되었습니다.");
@@ -61,16 +65,15 @@ const KoreanRegisterPage = () => {
       }
     } catch (e) {
       console.error(e);
-    } finally {
-      // loading 종료
     }
   };
+
   const onCreate = async () => {
     if (!usableWord) {
       message.warning("중복확인을 해주세요.");
       return;
     }
-    if (!korean || !description || !pronunciation || !level) {
+    if (!korean || !description || !pronunciation) {
       message.warning("내용을 입력해주세요.");
       return;
     }
@@ -83,10 +86,12 @@ const KoreanRegisterPage = () => {
         example_1,
         example_2,
         example_3,
-        level: 1, // 사용안하고 있어서 1로 고정
+        en_description,
+        en_pronunciation,
+        en_example_1,
+        en_example_2,
+        en_example_3,
         type,
-        source,
-        imageUrl,
       });
       if (response.status === 200 || response.status === 201) {
         message.success("등록이 완료되었습니다.");
@@ -96,8 +101,6 @@ const KoreanRegisterPage = () => {
       }
     } catch (e) {
       console.error(e);
-    } finally {
-      // loading 종료
     }
   };
 
@@ -107,7 +110,6 @@ const KoreanRegisterPage = () => {
       return;
     }
 
-    // 중복확인 api 호출
     try {
       const response = await checkWord(korean);
       if (response.status === 200 && !response.data.result) {
@@ -127,15 +129,18 @@ const KoreanRegisterPage = () => {
       const response = await getWord(params.id);
       if (response.status === 200) {
         const data = response.data;
-        setDescription(data.description);
-        setpronunciation(data.pronunciation);
-        setExmple1(data.example_1);
-        setExmple2(data.example_2);
-        setExmple3(data.example_3);
-        setType(data.type);
-        setSource(data.source);
-        setImageUrl(data.imageUrl);
         setKorean(data.korean);
+        setDescription(data.description);
+        setPronunciation(data.pronunciation);
+        setExample1(data.example_1);
+        setExample2(data.example_2);
+        setExample3(data.example_3);
+        setENDescription(data.en_description);
+        setENPronunciation(data.en_pronunciation);
+        setENExample1(data.en_example_1);
+        setENExample2(data.en_example_2);
+        setENExample3(data.en_example_3);
+        setType(data.type);
       }
     } catch (e) {
       console.error(e);
@@ -148,27 +153,20 @@ const KoreanRegisterPage = () => {
     if (params.id) {
       getWordDetail();
     }
-  }, []);
+  }, [params.id]);
 
   return (
     <div>
       <Title level={2}>한국어 {params.id ? "수정" : "등록"}</Title>
-      <Divider></Divider>
+      <Divider />
       {loading ? (
         <></>
       ) : (
-        <Form style={{ maxWidth: 800 }}>
+        <Form layout="vertical" style={{ maxWidth: 1000 }}>
           <Form.Item
             label="카테고리"
             name="type"
-            rules={[
-              {
-                required: true,
-                message: "Please input Korean!",
-              },
-            ]}
-            labelAlign="left"
-            labelCol={{ span: 5 }}
+            rules={[{ required: true, message: "카테고리를 선택해주세요!" }]}
             initialValue={type}
           >
             <Radio.Group onChange={(e) => setType(e.target.value)}>
@@ -181,23 +179,18 @@ const KoreanRegisterPage = () => {
           <Form.Item
             label="표현 / KR"
             name="korean"
-            rules={[
-              {
-                required: true,
-                message: "Please input Korean!",
-              },
-            ]}
-            labelAlign="left"
-            labelCol={{ span: 5 }}
+            rules={[{ required: true, message: "한국어를 입력해주세요!" }]}
+            initialValue={korean}
           >
-            <div
+            <Row
               style={{
                 display: "flex",
-                justifyContent: "space-between",
                 alignItems: "center",
+                justifyContent: "space-between",
               }}
             >
               <Input
+                style={{ flex: 1 }}
                 value={korean}
                 size="large"
                 onChange={(e) => {
@@ -205,153 +198,136 @@ const KoreanRegisterPage = () => {
                   setUsableWord(false);
                 }}
               />
-              <div
-                style={{
-                  width: 100,
-                  marginLeft: 10,
-                  height: 40,
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  backgroundColor: usableWord ? "#bfbfbf" : "#1890ff",
-                  borderRadius: 5,
-                  cursor: "pointer",
-                }}
+              <Button
                 onClick={onClickCheckWord}
+                disabled={usableWord}
+                style={{ marginLeft: 10, maxWidth: 100 }}
+                block
+                size="large"
               >
-                <span
-                  style={{
-                    color: "#fff",
-                  }}
-                >
-                  중복확인
-                </span>
-              </div>
-            </div>
+                중복확인
+              </Button>
+            </Row>
           </Form.Item>
-          <Form.Item
-            label="표현 발음기호 / Roman"
-            name="pronunciation"
-            rules={[
-              {
-                required: true,
-                message: "Please input pronunciation!",
-              },
-            ]}
-            labelAlign="left"
-            labelCol={{ span: 5 }}
-            initialValue={pronunciation}
-          >
-            <Input
-              size="large"
-              onChange={(e) => setpronunciation(e.target.value)}
-            />
-          </Form.Item>
-          <Form.Item
-            label="표현 뜻 / ID"
-            name="description"
-            rules={[
-              {
-                required: true,
-                message: "Please input description!",
-              },
-            ]}
-            labelCol={{ span: 5 }}
-            labelAlign="left"
-            initialValue={description}
-          >
-            <Input
-              size="large"
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </Form.Item>
-          {/* <Form.Item
-            label="Level"
-            name="Level"
-            rules={[
-              {
-                required: true,
-                message: "Please check level!",
-              },
-            ]}
-          >
-            <Rate
-              allowHalf
-              defaultValue={0}
-              onChange={(value) => setLevel(value)}
-            />
-          </Form.Item> */}
 
-          <Form.Item
-            label="예문 / KR"
-            name="example_1"
-            labelCol={{ span: 5 }}
-            labelAlign="left"
-            initialValue={example_1}
-          >
-            <Input size="large" onChange={(e) => setExmple1(e.target.value)} />
-          </Form.Item>
-          <Form.Item
-            label="예문 발음기호 / ROMAN"
-            name="example_2"
-            labelCol={{ span: 5 }}
-            labelAlign="left"
-            initialValue={example_2}
-          >
-            <Input size="large" onChange={(e) => setExmple2(e.target.value)} />
-          </Form.Item>
-          <Form.Item
-            label="예문 뜻 / ID"
-            name="example_3"
-            labelCol={{ span: 5 }}
-            labelAlign="left"
-            initialValue={example_3}
-          >
-            <Input size="large" onChange={(e) => setExmple3(e.target.value)} />
-          </Form.Item>
-          <Form.Item
-            label="출처"
-            name="source"
-            labelCol={{ span: 5 }}
-            labelAlign="left"
-            initialValue={source}
-          >
-            <Input size="large" onChange={(e) => setSource(e.target.value)} />
-          </Form.Item>
-          {/* <Form.Item
-            label="이미지 파일명"
-            name="imageUrl"
-            labelCol={{ span: 5 }}
-            labelAlign="left"
-          >
-            <Input size="large" onChange={(e) => setImageUrl(e.target.value)} />
-            <span
-              style={{
-                fontSize: 12,
-                color: "#999",
-              }}
-            >
-              파일 업로드 개발 전까지는 직접 전달주세요 !
-            </span>
-          </Form.Item> */}
-          <Row justify="end">
+          <Row gutter={16}>
+            <Col span={24}>
+              <Form.Item
+                label="표현 발음기호 / Roman"
+                name="pronunciation"
+                rules={[{ required: true, message: "발음을 입력해주세요!" }]}
+                initialValue={pronunciation}
+              >
+                <Input
+                  onChange={(e) => setPronunciation(e.target.value)}
+                  size="large"
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                label="표현 뜻 / ID"
+                name="description"
+                rules={[{ required: true, message: "의미를 입력해주세요!" }]}
+                initialValue={description}
+              >
+                <Input
+                  onChange={(e) => setDescription(e.target.value)}
+                  size="large"
+                />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label="표현 뜻 / EN"
+                name="en_description"
+                initialValue={en_description}
+              >
+                <Input
+                  onChange={(e) => setENDescription(e.target.value)}
+                  size="large"
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Divider />
+          <Row gutter={16}>
+            <Col span={24}>
+              <Form.Item
+                label="예문 / KR"
+                name="example_1"
+                initialValue={example_1}
+              >
+                <Input
+                  onChange={(e) => setExample1(e.target.value)}
+                  size="large"
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Row gutter={16}>
+            <Col span={24}>
+              <Form.Item
+                label="예문 발음기호 / Roman"
+                name="example_2"
+                initialValue={example_2}
+              >
+                <Input
+                  onChange={(e) => setExample2(e.target.value)}
+                  size="large"
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                label="예문 뜻 / ID"
+                name="example_3"
+                initialValue={example_3}
+              >
+                <Input
+                  onChange={(e) => setExample3(e.target.value)}
+                  size="large"
+                />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label="예문 뜻 / EN"
+                name="en_example_3"
+                initialValue={en_example_3}
+              >
+                <Input
+                  onChange={(e) => setENExample3(e.target.value)}
+                  size="large"
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Divider />
+
+          <Form.Item>
             <Button
               type="primary"
-              htmlType="submit"
-              onClick={() => {
-                params.id ? onUpdate() : onCreate();
-              }}
+              onClick={() => (params.id ? onUpdate() : onCreate())}
+              block
               size="large"
-              style={{
-                width: "120px",
-              }}
             >
               {params.id ? "수정" : "등록"}
             </Button>
-          </Row>
+          </Form.Item>
         </Form>
       )}
     </div>
   );
 };
+
 export default KoreanRegisterPage;
