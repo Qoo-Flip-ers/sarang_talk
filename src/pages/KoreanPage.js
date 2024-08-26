@@ -13,9 +13,15 @@ import {
   Typography,
   Divider,
   Radio,
+  Switch,
 } from "antd";
 import { useNavigate } from "react-router-dom";
-import { getWords, deleteWord, getWordsCount } from "../api/word";
+import {
+  getWords,
+  deleteWord,
+  getWordsCount,
+  getWordsOnlyEN,
+} from "../api/word";
 
 const { Title, Link } = Typography;
 
@@ -31,6 +37,7 @@ const KoreanPage = () => {
   });
 
   const [currentCategory, setCurrentCategory] = useState("all");
+  const [showOnlyMissingEnglish, setShowOnlyMissingEnglish] = useState(false);
 
   const [count, setCount] = useState({
     total: 0,
@@ -52,11 +59,21 @@ const KoreanPage = () => {
 
   const getList = async (newPage = 1, newCategory = "all") => {
     try {
-      const response = await getWords({
-        page: newPage,
-        limit: 10,
-        type: newCategory === "all" ? undefined : newCategory,
-      });
+      let response;
+      if (showOnlyMissingEnglish) {
+        response = await getWordsOnlyEN({
+          page: newPage,
+          limit: 10,
+          type: newCategory === "all" ? undefined : newCategory,
+        });
+      } else {
+        response = await getWords({
+          page: newPage,
+          limit: 10,
+          type: newCategory === "all" ? undefined : newCategory,
+        });
+      }
+
       if (response.status !== 200) {
         throw new Error("서버 에러");
       }
@@ -114,7 +131,7 @@ const KoreanPage = () => {
 
   useEffect(() => {
     getList(page, currentCategory);
-  }, [page, currentCategory]);
+  }, [page, currentCategory, showOnlyMissingEnglish]);
 
   const columns = [
     {
@@ -155,7 +172,7 @@ const KoreanPage = () => {
       title: "단어",
       dataIndex: "korean",
       key: "korean",
-      width: "40%",
+      width: "30%",
       render: (korean, row) => {
         return (
           <Col>
@@ -191,17 +208,22 @@ const KoreanPage = () => {
         );
       },
     },
-    // {
-    //   title: "뜻",
-    //   dataIndex: "description",
-    //   key: "description",
-    // },
-
+    {
+      title: "영어 설명",
+      dataIndex: "en_description",
+      key: "en_description",
+      width: "20%",
+      render: (en_description) => (
+        <p style={{ fontSize: 12, color: "#555555" }}>
+          {en_description || "미입력"}
+        </p>
+      ),
+    },
     {
       title: "예문",
       dataIndex: "example_1",
       key: "example_1",
-      width: "40%",
+      width: "30%",
       render: (example_1, row) => {
         return (
           <Col>
@@ -240,7 +262,6 @@ const KoreanPage = () => {
         );
       },
     },
-
     {
       title: "",
       width: "10%",
@@ -280,6 +301,11 @@ const KoreanPage = () => {
     getCounts();
   }, []);
 
+  const handleMissingEnglishSwitch = (checked) => {
+    setShowOnlyMissingEnglish(checked);
+    setPage(1);
+  };
+
   return (
     <div>
       <Title level={2}>한국어 관리</Title>
@@ -288,6 +314,8 @@ const KoreanPage = () => {
         <Row
           style={{
             marginBottom: 20,
+            width: "100%",
+            alignItems: "center",
           }}
         >
           <Radio.Group
@@ -419,7 +447,7 @@ const KoreanPage = () => {
           justify="space-between"
           style={{ width: "100%", paddingBottom: 10 }}
         >
-          <Row>
+          <Row style={{ alignItems: "center" }}>
             <Button
               style={{
                 marginRight: 6,
@@ -436,14 +464,40 @@ const KoreanPage = () => {
               삭제
             </Button>
           </Row>
-          <Pagination
-            current={page}
-            pageSize={10}
-            total={metadata.totalCount}
-            onChange={(newPage) => {
-              setPage(newPage);
-            }}
-          />
+          <Row style={{ alignItems: "center" }}>
+            <Col
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
+                // flexDirection: "column",
+                justifyContent: "center",
+              }}
+            >
+              <span style={{ fontSize: 10, color: "#888" }}>
+                영어 입력 필터링
+              </span>
+              <Switch
+                height={40}
+                checkedChildren="영어 미입력"
+                unCheckedChildren="전체"
+                size="default"
+                checked={showOnlyMissingEnglish}
+                onChange={handleMissingEnglishSwitch}
+              />
+            </Col>
+
+            <Pagination
+              style={{ marginLeft: 20 }}
+              current={page}
+              showSizeChanger={false}
+              pageSize={10}
+              total={metadata.totalCount}
+              onChange={(newPage) => {
+                setPage(newPage);
+              }}
+            />
+          </Row>
         </Row>
       </Flex>
       <Modal

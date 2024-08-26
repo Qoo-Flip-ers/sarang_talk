@@ -5,6 +5,11 @@ export const getWords = async (params) =>
     params,
   });
 
+export const getWordsOnlyEN = async (params) =>
+  await api.get("/words/empty/en", {
+    params,
+  });
+
 export const getWord = async (id) => await api.get(`/words/${id}`);
 
 export const createWord = async (payload) => await api.post("/words", payload);
