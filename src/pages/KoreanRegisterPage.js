@@ -11,7 +11,15 @@ import {
   Col,
 } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
-import { checkWord, createWord, getWord, updateWord } from "../api/word";
+import {
+  checkWord,
+  createWord,
+  getWord,
+  updateWord,
+  generateWord,
+} from "../api/word";
+import magicWand from "../assets/icon_magic_wand.png";
+
 const { Title } = Typography;
 
 const KoreanRegisterPage = () => {
@@ -123,6 +131,38 @@ const KoreanRegisterPage = () => {
     }
   };
 
+  const onClickGenerate = async () => {
+    if (!korean) {
+      message.warning("한국어를 입력해주세요.");
+      return;
+    }
+
+    if (!usableWord) {
+      message.warning("중복확인을 해주세요.");
+      return;
+    }
+
+    try {
+      const response = await generateWord(korean);
+      if (response.status === 200) {
+        const data = response.data;
+        setPronunciation(data.pronunciation);
+        setDescription(data.meaning_id);
+        setENDescription(data.meaning_en);
+        setExample1(data.example_sentence_kr);
+        setExample2(data.example_pronunciation);
+        setExample3(data.example_meaning_id);
+        setENExample3(data.example_meaning_en);
+        message.success("자동 생성이 완료되었습니다.");
+      } else {
+        message.error("자동 생성에 실패했습니다. 다시 시도해주세요.");
+      }
+    } catch (e) {
+      console.error(e);
+      message.error("자동 생성 중 오류가 발생했습니다.");
+    }
+  };
+
   const getWordDetail = async () => {
     setLoading(true);
     try {
@@ -206,6 +246,24 @@ const KoreanRegisterPage = () => {
                 size="large"
               >
                 중복확인
+              </Button>
+              <Button
+                onClick={onClickGenerate}
+                style={{ marginLeft: 10, maxWidth: 100 }}
+                block
+                disabled={!usableWord}
+                size="large"
+                icon={
+                  <img
+                    src={magicWand}
+                    style={{
+                      width: 20,
+                      height: 20,
+                    }}
+                  />
+                }
+              >
+                생성
               </Button>
             </Row>
           </Form.Item>

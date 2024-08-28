@@ -23,3 +23,6 @@ export const checkWord = async (korean) =>
   await api.post("/words/check", { korean });
 
 export const getWordsCount = async () => await api.get("/words/types");
+
+export const generateWord = async (expression) =>
+  await api.post("/generate/word", { expression });
