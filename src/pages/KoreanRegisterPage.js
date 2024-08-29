@@ -141,6 +141,7 @@ const KoreanRegisterPage = () => {
       message.warning("중복확인을 해주세요.");
       return;
     }
+    setLoading(true);
 
     try {
       const response = await generateWord(korean);
@@ -160,6 +161,8 @@ const KoreanRegisterPage = () => {
     } catch (e) {
       console.error(e);
       message.error("자동 생성 중 오류가 발생했습니다.");
+    } finally {
+      setLoading(false);
     }
   };
 
