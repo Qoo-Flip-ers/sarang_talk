@@ -198,9 +198,14 @@ const UserPage = () => {
       <Title level={2}>사용자 관리</Title>
       <Divider />
       <Row justify="space-between" style={{ width: "100%", paddingBottom: 10 }}>
-        <Button onClick={showModal} disabled={selectedRowKeys.length === 0}>
-          삭제
-        </Button>
+        <Row>
+          <Button style={{ marginRight: "5px" }} onClick={goToUserRegister}>
+            추가
+          </Button>
+          <Button onClick={showModal} disabled={selectedRowKeys.length === 0}>
+            삭제
+          </Button>
+        </Row>
         <Pagination
           current={page}
           pageSize={20}
