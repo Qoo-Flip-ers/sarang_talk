@@ -26,3 +26,8 @@ export const getWordsCount = async () => await api.get("/words/types");
 
 export const generateWord = async (expression) =>
   await api.post("/generate/word", { expression });
+
+export const getWordSounds = async (word) =>
+  await api.post(`/generate/speech`, {
+    word,
+  });
