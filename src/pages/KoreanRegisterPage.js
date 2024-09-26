@@ -20,6 +20,7 @@ import {
   updateWord,
   generateWord,
   getWordSounds,
+  combineAudioGif,
 } from "../api/word";
 import { uploadImage } from "../api/upload";
 import magicWand from "../assets/icon_magic_wand.png";
@@ -44,6 +45,7 @@ const KoreanRegisterPage = () => {
   const [usableWord, setUsableWord] = useState(params.id ? true : false);
   const [soundUrl, setSoundUrl] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
   const navigate = useNavigate();
 
   const onUpdate = async () => {
@@ -72,6 +74,7 @@ const KoreanRegisterPage = () => {
         type,
         audioUrl: soundUrl,
         imageUrl,
+        videoUrl,
       });
       if (response.status === 200 || response.status === 201) {
         message.success("수정이 완료되었습니다.");
@@ -110,6 +113,7 @@ const KoreanRegisterPage = () => {
         type,
         audioUrl: soundUrl,
         imageUrl,
+        videoUrl,
       });
       if (response.status === 200 || response.status === 201) {
         message.success("등록이 완료되었습니다.");
@@ -224,6 +228,7 @@ const KoreanRegisterPage = () => {
         setType(data.type);
         setSoundUrl(data.audioUrl);
         setImageUrl(data.imageUrl);
+        setVideoUrl(data.videoUrl);
       }
     } catch (e) {
       console.error(e);
@@ -240,6 +245,32 @@ const KoreanRegisterPage = () => {
     } catch (e) {
       console.error(e);
       message.error("이미지 업로드 중 오류가 발생했습니다.");
+    }
+  };
+
+  const onClickCombineAudioGif = async () => {
+    if (!imageUrl || !soundUrl) {
+      message.warning("이미지와 소리가 모두 필요합니다.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await combineAudioGif({
+        gifUrl: imageUrl,
+        audioUrl: soundUrl,
+      });
+      if (response.status === 200) {
+        setVideoUrl(response.data.url);
+        message.success("MP4 파일이 생성되었습니다.");
+      } else {
+        message.error("MP4 파일 생성에 실패했습니다. 다시 시도해주세요.");
+      }
+    } catch (e) {
+      console.error(e);
+      message.error("MP4 파일 생성 중 오류가 발생했습니다.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -348,31 +379,74 @@ const KoreanRegisterPage = () => {
             </Form.Item>
           )}
 
-          <Form.Item label="이미지 업로드">
-            <Upload
-              customRequest={({ file }) => handleImageUpload(file)}
-              showUploadList={false}
-            >
-              <Button>이미지 업로드</Button>
-            </Upload>
-            {imageUrl && (
-              <div
-                style={{ display: "flex", alignItems: "center", marginTop: 10 }}
+          <Form.Item>
+            <Row gutter={16} align="top" justify="start">
+              <Col span={12}>
+                <Form.Item label="이미지">
+                  <Upload
+                    customRequest={({ file }) => handleImageUpload(file)}
+                    showUploadList={false}
+                  >
+                    <Button style={{ marginBottom: "10px" }}>
+                      이미지 업로드
+                    </Button>
+                  </Upload>
+                  {imageUrl && (
+                    <div>
+                      <img
+                        src={imageUrl}
+                        alt="업로드된 이미지"
+                        style={{
+                          width: "200px",
+                          height: "auto",
+                          objectFit: "cover",
+                          marginRight: "10px",
+                          marginBottom: "10px",
+                        }}
+                      />
+                      <Button
+                        onClick={() => setImageUrl("")}
+                        type="primary"
+                        danger
+                        style={{ display: "block", marginTop: "5px" }}
+                      >
+                        삭제
+                      </Button>
+                    </div>
+                  )}
+                </Form.Item>
+              </Col>
+              <Col
+                span={12}
+                style={{ display: "flex", flexDirection: "column" }}
               >
-                <img
-                  src={imageUrl}
-                  alt="Uploaded"
-                  style={{
-                    maxWidth: "100px",
-                    maxHeight: "100px",
-                    marginRight: 10,
-                  }}
-                />
-                <Button onClick={() => setImageUrl("")} type="primary" danger>
-                  삭제
-                </Button>
-              </div>
-            )}
+                <Form.Item label="영상">
+                  <Button
+                    onClick={onClickCombineAudioGif}
+                    type="primary"
+                    style={{ marginBottom: "10px" }}
+                    disabled={!(imageUrl && soundUrl)}
+                  >
+                    영상 생성
+                  </Button>
+                  <div>
+                    {videoUrl && (
+                      <video
+                        controls
+                        src={videoUrl}
+                        style={{
+                          width: "200px",
+                          marginRight: "10px",
+                          marginBottom: "10px",
+                        }}
+                      >
+                        브라우저가 비디오를 지원하지 않습니다.
+                      </video>
+                    )}
+                  </div>
+                </Form.Item>
+              </Col>
+            </Row>
           </Form.Item>
 
           <Row gutter={16}>

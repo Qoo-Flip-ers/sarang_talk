@@ -31,3 +31,6 @@ export const getWordSounds = async (word) =>
   await api.post(`/generate/speech`, {
     word,
   });
+
+export const combineAudioGif = async (payload) =>
+  await api.post("/generate/combine-gif-audio", payload);
