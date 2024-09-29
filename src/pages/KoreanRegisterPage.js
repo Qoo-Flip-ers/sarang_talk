@@ -20,6 +20,7 @@ import {
   updateWord,
   generateWord,
   getWordSounds,
+  getWordSoundsByNaver,
   combineAudioGif,
 } from "../api/word";
 import { uploadImage } from "../api/upload";
@@ -208,6 +209,34 @@ const KoreanRegisterPage = () => {
     }
   };
 
+  const onClickGetSoundByNaver = async () => {
+    if (!korean) {
+      message.warning("한국어를 입력해주세요.");
+      return;
+    }
+
+    if (!usableWord) {
+      message.warning("중복확인을 해주세요.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await getWordSoundsByNaver(korean);
+      if (response.status === 200) {
+        setSoundUrl(response.data.audioUrl);
+        message.success("네이버 사전에서 소리를 가져왔습니다.");
+      } else {
+        message.error("소리를 가져오는데 실패했습니다. 다시 시도해주세요.");
+      }
+    } catch (e) {
+      console.error(e);
+      message.error("소리를 가져오는 중 오류가 발생했습니다.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const getWordDetail = async () => {
     setLoading(true);
     try {
@@ -367,6 +396,15 @@ const KoreanRegisterPage = () => {
                 size="large"
               >
                 소리 가져오기
+              </Button>
+              <Button
+                onClick={onClickGetSoundByNaver}
+                style={{ marginLeft: 10, maxWidth: 200 }}
+                block
+                disabled={!usableWord}
+                size="large"
+              >
+                네이버 사전 음성 가져오기
               </Button>
             </Row>
           </Form.Item>

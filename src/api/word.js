@@ -34,3 +34,10 @@ export const getWordSounds = async (word) =>
 
 export const combineAudioGif = async (payload) =>
   await api.post("/generate/combine-gif-audio", payload);
+
+export const getWordSoundsByNaver = async (word) =>
+  await api.get("/generate/pronunciation", {
+    params: {
+      word,
+    },
+  });
