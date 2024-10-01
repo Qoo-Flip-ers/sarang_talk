@@ -1,3 +1,4 @@
+// Start of Selection
 import React from "react";
 import { createSubscription } from "../api/subscription";
 import {
@@ -7,11 +8,8 @@ import {
   Input,
   Button,
   message,
-  DatePicker,
-  Row,
-  Col,
   Select,
-  Switch,
+  Radio,
 } from "antd";
 import { useNavigate } from "react-router-dom";
 
@@ -27,12 +25,11 @@ const UserRegisterPage = () => {
         name: values.name.trim(),
         phoneNumber: values.phoneNumber.trim(),
         email: values.email.trim(),
-        type: values.type.join(","),
-        quiz: values.quiz
-          ? values.type.map((t) => `${t}_quiz`).join(",")
-          : undefined,
-        zoom: values.zoom,
-        plan: values.plan,
+        lang: [values.lang],
+        plan: [values.plan],
+        platform: [values.platform],
+        duration: [values.duration],
+        zoom_mentoring: [values.zoom_mentoring],
       });
 
       if (response.status === 200 || response.status === 201) {
@@ -73,11 +70,22 @@ const UserRegisterPage = () => {
           rules={[
             {
               required: true,
-              message: "전화번호를 입력해주세요! ",
+              message: "전화번호를 입력해주세요!",
             },
           ]}
         >
           <Input placeholder="국가번호 포함 ex: +821012345678" />
+        </Form.Item>
+
+        <Form.Item
+          name="lang"
+          label="언어"
+          rules={[{ required: true, message: "언어를 선택해주세요!" }]}
+        >
+          <Radio.Group>
+            <Radio value="EN">EN</Radio>
+            <Radio value="ID">ID</Radio>
+          </Radio.Group>
         </Form.Item>
 
         <Form.Item
@@ -89,12 +97,12 @@ const UserRegisterPage = () => {
         </Form.Item>
 
         <Form.Item
-          name="type"
+          name="plan"
           label="구독 유형"
           rules={[{ required: true, message: "구독 유형을 선택해주세요!" }]}
         >
-          <Select mode="multiple" placeholder="여러 유형을 선택할 수 있습니다">
-            <Select.Option value="basic">basic</Select.Option>
+          <Select placeholder="구독 유형을 선택해주세요">
+            <Select.Option value="beginners">beginners</Select.Option>
             <Select.Option value="daily_conversation">
               daily_conversation
             </Select.Option>
@@ -102,31 +110,41 @@ const UserRegisterPage = () => {
           </Select>
         </Form.Item>
 
-        <Form.Item name="plan" label="플랜" initialValue="whatsapp_1">
-          <Select>
-            <Select.Option value="telegram_1">텔레그램 1개월</Select.Option>
-            <Select.Option value="telegram_3">텔레그램 3개월</Select.Option>
-            <Select.Option value="telegram_12">텔레그램 12개월</Select.Option>
-            <Select.Option value="whatsapp_1">왓츠앱 1개월</Select.Option>
-            <Select.Option value="whatsapp_3">왓츠앱 3개월</Select.Option>
-            <Select.Option value="whatsapp_12">왓츠앱 12개월</Select.Option>
+        <Form.Item
+          name="platform"
+          label="플랫폼"
+          rules={[{ required: true, message: "플랫폼을 선택해주세요!" }]}
+        >
+          <Select placeholder="플랫폼을 선택해주세요">
+            <Select.Option value="whatsapp">WhatsApp</Select.Option>
+            <Select.Option value="telegram">Telegram</Select.Option>
           </Select>
         </Form.Item>
 
-        <Form.Item name="quiz" label="퀴즈">
-          <Switch
-            checkedChildren="사용"
-            unCheckedChildren="사용하지 않음"
-            defaultChecked={false}
-          />
+        <Form.Item
+          name="duration"
+          label="구독 기간"
+          rules={[{ required: true, message: "구독 기간을 선택해주세요!" }]}
+        >
+          <Select placeholder="구독 기간을 선택해주세요">
+            <Select.Option value="1">1개월</Select.Option>
+            <Select.Option value="3">3개월</Select.Option>
+            <Select.Option value="6">6개월</Select.Option>
+            <Select.Option value="12">12개월</Select.Option>
+          </Select>
         </Form.Item>
 
-        <Form.Item name="zoom" label="줌">
-          <Switch
-            checkedChildren="사용"
-            unCheckedChildren="사용하지 않음"
-            defaultChecked={false}
-          />
+        <Form.Item
+          name="zoom_mentoring"
+          label="줌 멘토링"
+          rules={[
+            { required: true, message: "줌 멘토링 여부를 선택해주세요!" },
+          ]}
+        >
+          <Radio.Group>
+            <Radio value="yes">예</Radio>
+            <Radio value="no">아니오</Radio>
+          </Radio.Group>
         </Form.Item>
 
         <Form.Item>
